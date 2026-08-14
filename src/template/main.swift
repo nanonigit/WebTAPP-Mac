@@ -120,7 +120,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             webConfiguration.websiteDataStore = WKWebsiteDataStore.default()
         }
 
-        webConfiguration.preferences.isElementFullscreenEnabled = true
+        if #available(macOS 12.3, *) {
+            webConfiguration.preferences.isElementFullscreenEnabled = true
+        }
         webConfiguration.defaultWebpagePreferences.allowsContentJavaScript = true
 
         // User Agent: Default to modern Chrome User-Agent to prevent Google OAuth 403 blocks

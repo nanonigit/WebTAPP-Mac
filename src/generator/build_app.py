@@ -36,6 +36,7 @@ def ensure_binary(template_dir, cache_dir):
     cmd = [
         "swiftc",
         "-O",
+        "-target", "arm64-apple-macos12.0",
         "-module-cache-path", cache_dir,
         source_swift,
         "-o", binary_path
