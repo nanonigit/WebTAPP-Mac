@@ -42,21 +42,6 @@ struct AppConfig: Codable {
     }
 }
 
-// MARK: - UUID Helper for Isolated Storage
-func deterministicUUID(from string: String) -> UUID {
-    let hash = Insecure.MD5.hash(data: Data(string.utf8))
-    var bytes = Array(hash)
-    bytes[6] = (bytes[6] & 0x0F) | 0x30 // RFC 4122 version 3
-    bytes[8] = (bytes[8] & 0x3F) | 0x80 // RFC 4122 variant
-    let tuple: uuid_t = (
-        bytes[0], bytes[1], bytes[2], bytes[3],
-        bytes[4], bytes[5], bytes[6], bytes[7],
-        bytes[8], bytes[9], bytes[10], bytes[11],
-        bytes[12], bytes[13], bytes[14], bytes[15]
-    )
-    return UUID(uuid: tuple)
-}
-
 // MARK: - App Delegate
 class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDelegate {
     var window: NSWindow!
@@ -111,26 +96,37 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             window.titleVisibility = .hidden
         }
 
-        // WebKit Configuration with Isolated Storage
+        // WebKit Configuration
+        // Note: Because each app bundle has a unique CFBundleIdentifier in Info.plist,
+        // WKWebsiteDataStore.default() is automatically fully isolated per-application on macOS.
         let webConfiguration = WKWebViewConfiguration()
-        if #available(macOS 14.0, *) {
-            let storeId = deterministicUUID(from: config.bundleId)
-            webConfiguration.websiteDataStore = WKWebsiteDataStore(forIdentifier: storeId)
-        } else {
-            webConfiguration.websiteDataStore = WKWebsiteDataStore.default()
-        }
+        webConfiguration.websiteDataStore = WKWebsiteDataStore.default()
 
         if #available(macOS 12.3, *) {
             webConfiguration.preferences.isElementFullscreenEnabled = true
         }
+        webConfiguration.preferences.javaScriptCanOpenWindowsAutomatically = true
         webConfiguration.defaultWebpagePreferences.allowsContentJavaScript = true
 
-        // User Agent: Default to modern Chrome User-Agent to prevent Google OAuth 403 blocks
-        let chromeUA = config.userAgent ?? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+        // User Agent: Use standard Desktop Safari User-Agent.
+        // Google checks if the browser matches Safari (Apple WebKit) without mismatching Chrome objects.
+        let safariUA = config.userAgent ?? "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15"
+        webConfiguration.applicationNameForUserAgent = "Version/18.3 Safari/605.1.15"
+
+        // Inject script to ensure standard browser environment
+        let userScriptSource = """
+        try {
+            if (window.navigator) {
+                Object.defineProperty(window.navigator, 'webdriver', { get: () => undefined });
+            }
+        } catch(e) {}
+        """
+        let userScript = WKUserScript(source: userScriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+        webConfiguration.userContentController.addUserScript(userScript)
 
         webView = WKWebView(frame: window.contentView?.bounds ?? .zero, configuration: webConfiguration)
         webView.autoresizingMask = [.width, .height]
-        webView.customUserAgent = chromeUA
+        webView.customUserAgent = safariUA
         webView.allowsBackForwardNavigationGestures = true
         webView.navigationDelegate = self
         webView.uiDelegate = self
@@ -216,9 +212,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
         let targetHost = url.host?.lowercased() ?? ""
 
-        // Check if authentication domain (OAuth flows)
+        // Authentication domain patterns (Google, Meta, Apple, Microsoft SSO)
         let authKeywords = [
-            "accounts.google.com", "appleid.apple.com", "login.microsoftonline.com",
+            "accounts.google.com", "google.com/accounts", "google.com/signin",
+            "appleid.apple.com", "login.microsoftonline.com", "login.live.com",
             "facebook.com", "meta.com", "messenger.com", "github.com/login",
             "auth0.com", "okta.com", "clerk.com", "oauth", "login", "signin", "sso"
         ]
