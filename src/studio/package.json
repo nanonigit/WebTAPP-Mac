@@ -1,0 +1,7 @@
+{
+  "name": "web-to-app-studio",
+  "version": "1.0.0",
+  "description": "Web-to-App Studio GUI Desktop Application",
+  "main": "main.js",
+  "private": true
+}
