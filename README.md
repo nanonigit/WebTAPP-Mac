@@ -29,7 +29,7 @@ Powered by an embedded Chromium runtime (Electron), providing 100% full compatib
 ### Via Homebrew Cask
 
 ```bash
-brew tap nanonigit/cocolite
+brew tap nanonigit/web-to-app
 brew install --cask web-to-app-studio
 ```
 

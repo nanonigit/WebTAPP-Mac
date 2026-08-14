@@ -29,7 +29,7 @@ Chromiumランタイム（Electronベース）を内蔵しており、Googleの�
 ### Homebrew Cask 経由（推奨）
 
 ```bash
-brew tap nanonigit/cocolite
+brew tap nanonigit/web-to-app
 brew install --cask web-to-app-studio
 ```
 
