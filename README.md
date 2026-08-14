@@ -1,102 +1,108 @@
-# Web-to-App: 超軽量 Webアプリ独立化ジェネレーター (WebCatalog for Mac)
+# Web-to-App Studio (Chromium Powered)
 
-Google NotebookLMやFacebook Messenger、ChatGPT、Claude、NotionなどのWebサービスを、**わずか0.2MB〜数MBの超軽量・高速な独立macOSネイティブアプリ（`.app`）** に変換するツールです。
+[English](README.md) | [日本語](README.ja.md)
 
----
+An ultra-fast, lightweight macOS desktop application that turns any web service (Google Notebook, Facebook Messenger, note, ChatGPT, Claude, Notion, etc.) into a standalone macOS native app (`.app`).
 
-## 🌟 主な特徴
-
-- 🚀 **超軽量・超高速**: Electron（150MB〜）を一切使わず、macOS標準の **Swift + WKWebView (AppKit)** を採用。アプリサイズはわずか **0.2MB**。
-- 🔒 **完全なセッション分離**: 各アプリ固有のBundle Identifierごとに独立した `WKWebsiteDataStore` を生成。アカウントの使い分けやクッキーの競合が起きません。
-- 🔑 **Google / Meta ログイン完全対応**: Google等のOAuth認証ブロック（`403 disallowed_useragent`）を回避する最新デスクトップChrome User-Agentを自動設定。
-- 🧭 **賢い外部リンク振り分け**: サービス内部の遷移やOAuth認証はアプリ内で処理し、外部サイトへのリンクはmacOS標準ブラウザ（Safari/Chrome）で開きます。
-- 🎨 **アイコン自動取得 & `.icns` 変換**: Webサイトから高解像度のアイコンを自動抽出し、macOSネイティブの `.icns` を自動生成。
-- ⌨️ **macOSネイティブ操作感**:
-  - `Cmd + R` (リロード), `Cmd + Shift + R` (強制リロード)
-  - `Cmd + [` / `Cmd + ]` (戻る / 進む)
-  - `Cmd + +` / `Cmd + -` / `Cmd + 0` (ズームイン / ズームアウト / 標準サイズ)
-  - `Cmd + W` (ウィンドウを閉じる), `Cmd + Q` (終了)
-  - トラックパッドの2本指スワイプナビゲーション
-  - Dockバッジ（未読通知数の自動表示）
-  - カメラ・マイクのパーミッション自動付与（ビデオ通話対応）
+Powered by an embedded Chromium runtime (Electron), providing 100% full compatibility with Google OAuth logins (NotebookLM, Gmail, Google Drive) and complete session isolation.
 
 ---
 
-## 🚀 使い方
+## ✨ Features
 
-### 1. GUI 画面で作成する（推奨）
+- 🚀 **1-Click Native App Generator**: Create standalone macOS applications in less than 2 seconds.
+- 🔑 **100% Google OAuth & Passkey Compatibility**: Genuine Chromium engine passes Google's Botguard verification with zero warnings.
+- 🔒 **Complete Session Isolation**: Each app uses its own persistent partition (`persist:appId`) and storage sandbox—run multiple isolated accounts effortlessly.
+- 🎨 **Smart High-Resolution Icon Extraction**: Automatically extracts Apple Touch Icons, Manifest icons, and Favicons from web pages and compiles them into macOS `.icns`.
+- 🖥️ **Native macOS Experience**:
+  - Unread badge counter in macOS Dock
+  - Standard macOS shortcuts (`Cmd+R`, `Cmd+W`, `Cmd+Q`, `Cmd+[`, `Cmd+]`, `Cmd++`, `Cmd+-`)
+  - Auto window state restoration
+  - Camera, microphone, and notification permission support
+  - Optional frameless / borderless modern title bar (Full View)
+- 📦 **Standalone Studio GUI + CLI**: Use either the sleek `Web-to-App Studio.app` GUI or the terminal CLI `web-to-app`.
 
-ブラウザから直感的にアプリを作成できるGUIスタジオが付属しています：
+---
+
+## 📥 Installation
+
+### Via Homebrew Cask
 
 ```bash
-/Users/naoki/.gemini/antigravity/scratch/web-to-app/bin/web-to-app-gui
+brew tap nanonigit/cocolite
+brew install --cask web-to-app-studio
 ```
-ブラウザが開き、NotebookLMやMessengerのクイックプリセットからワンクリックでアプリを作成・インストールできます。
+
+### Manual Download
+
+Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigit/web-to-app/releases), open it, and move **Web-to-App Studio.app** to your `/Applications` or `~/Applications` folder.
 
 ---
 
-### 2. コマンドライン（CLI）で作成する
+## 🚀 Usage
 
-`web-to-app` コマンドで簡単に `.app` を生成できます。
+### 1. Using the GUI Studio (Recommended)
 
-#### 基本コマンド例:
+1. Launch **Web-to-App Studio.app** from Spotlight (`Cmd + Space`) or Launchpad.
+2. Pick a quick preset (Google Notebook, Messenger, note, ChatGPT, Claude, Notion, etc.) or enter a custom URL.
+3. (Optional) Choose a custom icon image or let it auto-extract from the website.
+4. Click **"🚀 独立Macアプリ（.app）を作成"** (Build Standalone App).
+5. The generated app is instantly installed to `~/Applications/` and ready to launch!
+
+---
+
+### 2. Using the CLI
 
 ```bash
-# Google NotebookLM を作成して ~/Applications にインストール
-/Users/naoki/.gemini/antigravity/scratch/web-to-app/bin/web-to-app \
-  --name "Google NotebookLM" \
-  --url "https://notebooklm.google.com" \
-  --install
+# Create Google Notebook and install to ~/Applications
+./bin/web-to-app --name "Google Notebook" --url "https://notebooklm.google.com" --install
 
-# Facebook Messenger を作成
-/Users/naoki/.gemini/antigravity/scratch/web-to-app/bin/web-to-app \
-  --name "Facebook Messenger" \
-  --url "https://www.messenger.com" \
-  --install
+# Create Messenger
+./bin/web-to-app --name "Messenger" --url "https://www.messenger.com" --install
 
-# ChatGPT をモダンな枠なしウィンドウ（Full View）で作成
-/Users/naoki/.gemini/antigravity/scratch/web-to-app/bin/web-to-app \
-  --name "ChatGPT" \
-  --url "https://chatgpt.com" \
-  --hidden-titlebar \
-  --install
+# Create custom app with custom icon and frameless window
+./bin/web-to-app --name "My App" --url "https://example.com" --icon ./icon.png --hidden-titlebar --install
 ```
 
-#### 利用可能なオプション:
+#### CLI Options:
 
-| オプション | 説明 |
+| Option | Description |
 | :--- | :--- |
-| `--name`, `-n` | **[必須]** アプリ名 (例: `"Google NotebookLM"`) |
-| `--url`, `-u` | **[必須]** 開始URL (例: `"https://notebooklm.google.com"`) |
-| `--install` | `~/Applications` に直接保存（SpotlightやLaunchpadから即起動可能） |
-| `--output`, `-o` | `.app` を出力するディレクトリ（デフォルト: カレントディレクトリ） |
-| `--icon`, `-i` | カスタムアイコン画像（PNG/JPEG/ICO/ICNS）。省略時はWebから自動取得 |
-| `--hidden-titlebar` | モダンな枠なしタイトルバー（コンテンツ領域をウィンドウ上端まで拡大） |
-| `--width` | 初期のウィンドウ幅 (デフォルト: `1200`) |
-| `--height` | 初期のウィンドウ高さ (デフォルト: `800`) |
-| `--bundle-id`, `-b` | カスタムBundle ID (デフォルト: `com.webtoapp.<name>`) |
-| `--custom-css` | ページロード時に注入するカスタムCSS |
-| `--custom-js` | ページロード時に実行するカスタムJavaScript |
+| `--name`, `-n` | **[Required]** Display Name of the app |
+| `--url`, `-u` | **[Required]** Starting URL |
+| `--install` | Directly install to `~/Applications/` |
+| `--icon`, `-i` | Custom icon path (PNG/JPEG/ICNS). Omit to auto-extract from URL |
+| `--hidden-titlebar` | Frameless modern title bar |
+| `--width`, `--height` | Initial window dimensions |
+| `--output`, `-o` | Output directory (defaults to current directory) |
 
 ---
 
-## 📂 ディレクトリ構成
+## 🛠️ Architecture
 
 ```text
 web-to-app/
 ├── bin/
-│   ├── web-to-app           # CLI実行スクリプト
-│   └── web-to-app-gui       # GUIスタジオ起動スクリプト
+│   └── web-to-app            # CLI executable
 ├── src/
-│   ├── template/            # Swift + AppKit + WKWebView テンプレート
-│   │   ├── main.swift
-│   │   ├── Info.plist.template
-│   │   └── WebAppBinary     # 高速コンパイル済みネイティブバイナリ (~150KB)
-│   ├── generator/           # アプリ組み立て & アイコン処理エンジン
-│   │   ├── build_app.py
-│   │   └── icon_processor.py
-│   └── gui/                 # Web-to-App Studio (ローカルWeb GUI)
-│       ├── server.py
-│       └── index.html
-└── dist/                    # 生成されたテスト用 .app バンドル
+│   ├── studio/               # Web-to-App Studio GUI Application
+│   │   ├── main.js
+│   │   ├── preload.js
+│   │   └── index.html
+│   ├── template/             # Chromium runtime template
+│   │   ├── main.js
+│   │   ├── preload.js
+│   │   └── package.json
+│   └── generator/            # Packaging & Icon Processor
+│       ├── build_app.py
+│       ├── build_studio.py
+│       └── icon_processor.py
+└── Casks/                    # Homebrew Cask Formula
+    └── web-to-app-studio.rb
 ```
+
+---
+
+## 📄 License
+
+MIT License.
