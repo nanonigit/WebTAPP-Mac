@@ -1,0 +1,7 @@
+{
+  "name": "web-to-app-runtime",
+  "version": "1.0.0",
+  "description": "Standalone Web Application Runtime powered by Chromium",
+  "main": "main.js",
+  "private": true
+}
