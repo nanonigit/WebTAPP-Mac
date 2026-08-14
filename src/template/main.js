@@ -33,6 +33,7 @@ const isolatedUserData = path.join(app.getPath('appData'), config.bundleId);
 app.setPath('userData', isolatedUserData);
 
 let mainWindow = null;
+let isQuitting = false;
 
 function setupMenu(appName, win) {
   const isMac = process.platform === 'darwin';
@@ -46,7 +47,14 @@ function setupMenu(appName, win) {
         { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
-        { role: 'quit', label: `Quit ${appName}` }
+        {
+          label: `Quit ${appName}`,
+          accelerator: 'CmdOrCtrl+Q',
+          click: () => {
+            isQuitting = true;
+            app.quit();
+          }
+        }
       ]
     }] : []),
     {
@@ -80,12 +88,12 @@ function setupMenu(appName, win) {
         {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
-          click: () => { if (win.webContents.canGoBack()) win.webContents.goBack(); }
+          click: () => { if (win && !win.isDestroyed() && win.webContents.canGoBack()) win.webContents.goBack(); }
         },
         {
           label: 'Forward',
           accelerator: 'CmdOrCtrl+]',
-          click: () => { if (win.webContents.canGoForward()) win.webContents.goForward(); }
+          click: () => { if (win && !win.isDestroyed() && win.webContents.canGoForward()) win.webContents.goForward(); }
         }
       ]
     },
@@ -95,7 +103,15 @@ function setupMenu(appName, win) {
         { role: 'minimize' },
         { role: 'zoom' },
         { type: 'separator' },
-        { role: 'close' }
+        {
+          label: 'Close Window',
+          accelerator: 'CmdOrCtrl+W',
+          click: () => {
+            if (win && !win.isDestroyed()) {
+              win.hide();
+            }
+          }
+        }
       ]
     }
   ];
@@ -104,10 +120,9 @@ function setupMenu(appName, win) {
   Menu.setApplicationMenu(menu);
 }
 
-app.whenReady().then(() => {
+function createWindow() {
   const ses = session.fromPartition('persist:' + config.bundleId);
 
-  // Set permissions
   ses.setPermissionRequestHandler((webContents, permission, callback) => {
     const allowed = ['media', 'notifications', 'camera', 'microphone', 'display-capture', 'clipboard-read'];
     callback(allowed.includes(permission));
@@ -131,8 +146,7 @@ app.whenReady().then(() => {
     }
   });
 
-  // Google OAuth fix: Strip 'Electron/x.x.x' from User-Agent.
-  // Because the engine is true Chromium, this produces a 100% genuine Chrome fingerprint.
+  // Clean User-Agent for Google & Meta OAuth compatibility
   const defaultUA = mainWindow.webContents.userAgent;
   const cleanUA = defaultUA.replace(/Electron\/\S+\s?/, '');
   mainWindow.webContents.userAgent = cleanUA;
@@ -143,6 +157,18 @@ app.whenReady().then(() => {
       const match = title.match(/(?:\(|\[)(\d+\+?)(?:\)|\])/);
       app.dock.setBadge(match ? match[1] : '');
     }
+  });
+
+  // Intercept window close to hide on macOS
+  mainWindow.on('close', (event) => {
+    if (!isQuitting && process.platform === 'darwin') {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
   });
 
   // Smart URL and Popup Handler
@@ -218,6 +244,14 @@ app.whenReady().then(() => {
   });
 
   mainWindow.loadURL(config.url);
+}
+
+app.whenReady().then(() => {
+  createWindow();
+});
+
+app.on('before-quit', () => {
+  isQuitting = true;
 });
 
 app.on('window-all-closed', () => {
@@ -227,7 +261,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0 && mainWindow) {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    createWindow();
+  } else {
     mainWindow.show();
+    mainWindow.focus();
   }
 });
