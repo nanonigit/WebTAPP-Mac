@@ -200,6 +200,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         }
 
         let scheme = url.scheme?.lowercased() ?? ""
+
+        // Internal browser schemes -> Always allow inside WebView
+        if scheme == "about" || scheme == "blob" || scheme == "data" || scheme == "javascript" {
+            decisionHandler(.allow)
+            return
+        }
+
+        // Custom external schemes (e.g. mailto:, tel:, zoommtg:, slack:)
         if scheme != "http" && scheme != "https" {
             NSWorkspace.shared.open(url)
             decisionHandler(.cancel)
@@ -211,13 +219,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
         // Check if authentication domain (OAuth flows)
         let authKeywords = [
             "accounts.google.com", "appleid.apple.com", "login.microsoftonline.com",
-            "facebook.com", "github.com/login", "auth0.com", "okta.com", "clerk.com",
-            "oauth", "login", "signin", "sso"
+            "facebook.com", "meta.com", "messenger.com", "github.com/login",
+            "auth0.com", "okta.com", "clerk.com", "oauth", "login", "signin", "sso"
         ]
         let isAuthFlow = authKeywords.contains { targetHost.contains($0) || url.absoluteString.contains($0) }
 
         if navigationAction.navigationType == .linkActivated {
-            let isSameHost = targetHost == initialHost || targetHost.hasSuffix("." + initialHost) || initialHost.hasSuffix("." + targetHost)
+            let isSameHost = initialHost.isEmpty ||
+                             targetHost == initialHost ||
+                             targetHost.hasSuffix("." + initialHost) ||
+                             initialHost.hasSuffix("." + targetHost)
 
             if !isSameHost && !isAuthFlow && (config.allowExternalLinksInDefaultBrowser ?? true) {
                 NSWorkspace.shared.open(url)
@@ -231,6 +242,40 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
 
     // MARK: - WKUIDelegate (Popups, OAuth & Media Permissions)
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        guard let url = navigationAction.request.url else {
+            return createPopup(with: configuration, windowFeatures: windowFeatures)
+        }
+
+        let scheme = url.scheme?.lowercased() ?? ""
+        if scheme == "about" || scheme == "blob" || scheme == "data" || url.absoluteString.isEmpty {
+            return createPopup(with: configuration, windowFeatures: windowFeatures)
+        }
+
+        let targetHost = url.host?.lowercased() ?? ""
+        let authKeywords = [
+            "accounts.google.com", "appleid.apple.com", "login.microsoftonline.com",
+            "facebook.com", "meta.com", "messenger.com", "github.com/login",
+            "auth0.com", "okta.com", "clerk.com", "oauth", "login", "signin", "sso"
+        ]
+        let isAuthFlow = authKeywords.contains { targetHost.contains($0) || url.absoluteString.contains($0) }
+        let isSameHost = initialHost.isEmpty ||
+                         targetHost == initialHost ||
+                         targetHost.hasSuffix("." + initialHost) ||
+                         initialHost.hasSuffix("." + targetHost)
+
+        if isAuthFlow || isSameHost || windowFeatures.width != nil || windowFeatures.height != nil {
+            return createPopup(with: configuration, windowFeatures: windowFeatures)
+        }
+
+        if navigationAction.navigationType == .linkActivated && (config.allowExternalLinksInDefaultBrowser ?? true) {
+            NSWorkspace.shared.open(url)
+            return nil
+        }
+
+        return createPopup(with: configuration, windowFeatures: windowFeatures)
+    }
+
+    private func createPopup(with configuration: WKWebViewConfiguration, windowFeatures: WKWindowFeatures) -> WKWebView {
         let popupWidth = CGFloat(windowFeatures.width?.doubleValue ?? 600)
         let popupHeight = CGFloat(windowFeatures.height?.doubleValue ?? 700)
         let screenRect = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
@@ -247,7 +292,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate, WKUIDe
             backing: .buffered,
             defer: false
         )
-        popupWindow.title = "Login / Authorization"
+        popupWindow.title = "Login / Dialog"
         popupWindow.isReleasedWhenClosed = false
 
         let popupWebView = WKWebView(frame: popupWindow.contentView?.bounds ?? .zero, configuration: configuration)
