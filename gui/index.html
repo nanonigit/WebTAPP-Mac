@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web-to-App Studio | WebCatalog for Mac</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card-bg: #181c27;
+      --card-border: #262c3d;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --input-bg: #11141e;
+      --input-border: #2a334a;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 9999px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Preset Grid */
+    .presets-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .preset-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 10px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--accent);
+      background: #1f2536;
+      transform: translateY(-2px);
+    }
+
+    .preset-icon {
+      font-size: 24px;
+    }
+
+    /* Main Form */
+    .form-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #d1d5db;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="number"] {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.15s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+      margin-bottom: 24px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: normal;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      accent-color: var(--accent);
+      width: 16px;
+      height: 16px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    .submit-btn:disabled {
+      background: #4b5563;
+      cursor: not-allowed;
+    }
+
+    /* Result modal/box */
+    #result-box {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 12px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #result-box.success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    #result-box.error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid #ffffff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Web-to-App Studio</div>
+      <h1>WebCatalog for macOS</h1>
+      <p class="subtitle">Webサービスを超軽量（~2MB）な独立ネイティブMacアプリ（.app）に変換</p>
+    </header>
+
+    <div class="presets-title">クイックプリセット</div>
+    <div class="presets-grid">
+      <button class="preset-btn" onclick="selectPreset('Google NotebookLM', 'https://notebooklm.google.com')">
+        <span class="preset-icon">📔</span>
+        <span>NotebookLM</span>
+      </button>
+      <button class="preset-btn" onclick="selectPreset('Facebook Messenger', 'https://www.messenger.com')">
+        <span class="preset-icon">💬</span>
+        <span>Messenger</span>
+      </button>
+      <button class="preset-btn" onclick="selectPreset('ChatGPT', 'https://chatgpt.com')">
+        <span class="preset-icon">🤖</span>
+        <span>ChatGPT</span>
+      </button>
+      <button class="preset-btn" onclick="selectPreset('Claude', 'https://claude.ai')">
+        <span class="preset-icon">🧠</span>
+        <span>Claude</span>
+      </button>
+      <button class="preset-btn" onclick="selectPreset('Notion', 'https://www.notion.so')">
+        <span class="preset-icon">📝</span>
+        <span>Notion</span>
+      </button>
+      <button class="preset-btn" onclick="selectPreset('YouTube Music', 'https://music.youtube.com')">
+        <span class="preset-icon">🎵</span>
+        <span>YT Music</span>
+      </button>
+    </div>
+
+    <div class="form-card">
+      <form id="app-form" onsubmit="handleBuild(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">アプリ名</label>
+            <input type="text" id="name" placeholder="例: Google NotebookLM" required>
+          </div>
+          <div class="form-group">
+            <label for="bundleId">Bundle ID (任意)</label>
+            <input type="text" id="bundleId" placeholder="自動生成 (例: com.webtoapp.notebooklm)">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="url">WebサイトのURL</label>
+          <input type="url" id="url" placeholder="https://notebooklm.google.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="icon">カスタムアイコン画像 (任意 / 省略時はWebから高画質アイコンを自動取得)</label>
+          <input type="text" id="icon" placeholder="/path/to/icon.png または空欄">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="width">初期幅 (px)</label>
+            <input type="number" id="width" value="1200" min="400">
+          </div>
+          <div class="form-group">
+            <label for="height">初期高さ (px)</label>
+            <input type="number" id="height" value="800" min="300">
+          </div>
+        </div>
+
+        <div class="options-grid">
+          <label class="checkbox-label">
+            <input type="checkbox" id="install" checked>
+            ~/Applications に直接インストール
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="hiddenTitlebar">
+            モダンな枠なしタイトルバー (Full View)
+          </label>
+        </div>
+
+        <button type="submit" id="submit-btn" class="submit-btn">
+          <span>🚀 独立Macアプリ（.app）を作成</span>
+        </button>
+      </form>
+
+      <div id="result-box"></div>
+    </div>
+  </div>
+
+  <script>
+    function selectPreset(name, url) {
+      document.getElementById('name').value = name;
+      document.getElementById('url').value = url;
+      document.getElementById('bundleId').value = '';
+    }
+
+    async function handleBuild(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submit-btn');
+      const resultBox = document.getElementById('result-box');
+      
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        url: document.getElementById('url').value.trim(),
+        bundle_id: document.getElementById('bundleId').value.trim() || null,
+        icon: document.getElementById('icon').value.trim() || null,
+        width: parseInt(document.getElementById('width').value) || 1200,
+        height: parseInt(document.getElementById('height').value) || 800,
+        install: document.getElementById('install').checked,
+        hidden_titlebar: document.getElementById('hiddenTitlebar').checked
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> <span>アプリを生成中... (アイコン取得 & ビルド)</span>';
+      resultBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/build', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          resultBox.className = 'success';
+          resultBox.innerHTML = `<strong>🎉 アプリが完成しました！</strong><br>
+          場所: <code>${data.path}</code><br>
+          Spotlight (Cmd+Space) や Dock、Finder からすぐに起動できます。`;
+          resultBox.style.display = 'block';
+        } else {
+          resultBox.className = 'error';
+          resultBox.innerHTML = `<strong>エラー:</strong> ${data.error || '作成に失敗しました'}`;
+          resultBox.style.display = 'block';
+        }
+      } catch (err) {
+        resultBox.className = 'error';
+        resultBox.innerHTML = `<strong>通信エラー:</strong> ${err.message}`;
+        resultBox.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>🚀 独立Macアプリ（.app）を作成</span>';
+      }
+    }
+  </script>
+</body>
+</html>
