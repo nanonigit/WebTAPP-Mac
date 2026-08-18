@@ -1,6 +1,6 @@
 cask "web-to-app-studio" do
-  version "1.0.0"
-  sha256 "f28e0fb25b466d6380879abc986d38df149c8fa3ef7a3f44d50f5a8cc15dd804"
+  version "1.0.1"
+  sha256 "8766f5de15ae25badf5e41f0b0176b7fa6a77b126191dc6ba4cd30d1ce480549"
 
   url "https://github.com/nanonigit/web-to-app/releases/download/v#{version}/Web-to-App-Studio-v#{version}.zip"
 
