@@ -45,6 +45,14 @@ def build_studio_app(output_dir=None):
     studio_src = BASE_DIR / "src" / "studio"
     shutil.copytree(str(studio_src), app_pkg_dir)
 
+    # Copy generator & template & electron-base into app bundle for complete standalone self-containment
+    shutil.copytree(str(BASE_DIR / "src" / "generator"), os.path.join(app_pkg_dir, "generator"))
+    shutil.copytree(str(BASE_DIR / "src" / "template"), os.path.join(app_pkg_dir, "template"))
+    
+    electron_base_dest = os.path.join(app_pkg_dir, "electron-base", "Electron.app")
+    os.makedirs(os.path.dirname(electron_base_dest), exist_ok=True)
+    shutil.copytree(str(electron_base), electron_base_dest, symlinks=True)
+
     # Generate and copy Icon
     icon_source = str(BASE_DIR / "studio_icon.png")
     icon_dest = os.path.join(resources_dir, "AppIcon.icns")
@@ -68,10 +76,13 @@ def build_studio_app(output_dir=None):
     with open(info_plist_path, "wb") as f:
         plistlib.dump(plist_data, f)
 
+    # Ad-hoc code sign to ensure macOS Gatekeeper approval
+    subprocess.run(["xattr", "-cr", app_bundle_path])
+    subprocess.run(["codesign", "--force", "--deep", "--sign", "-", app_bundle_path])
     subprocess.run(["touch", app_bundle_path])
 
     print("\n" + "=" * 60)
-    print(f"🎉  Success! {app_name}.app generated successfully:")
+    print(f"🎉  Success! Self-contained {app_name}.app generated successfully:")
     print(f"    App Path : {app_bundle_path}")
     print("=" * 60 + "\n")
     return app_bundle_path

@@ -1,13 +1,20 @@
 const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
 const path = require('path');
+const fs = require('fs');
 const { spawn } = require('child_process');
 
 let mainWindow = null;
 
-// Resolve project root (works both inside .app and in development)
-function getProjectRoot() {
-  // If running inside Resources/app/, project root is passed or relative
-  return path.resolve(__dirname, '../../..');
+function getBuildScriptPath() {
+  const candidateInternal = path.join(__dirname, 'generator', 'build_app.py');
+  if (fs.existsSync(candidateInternal)) {
+    return candidateInternal;
+  }
+  const candidateDev = path.join(__dirname, '..', 'generator', 'build_app.py');
+  if (fs.existsSync(candidateDev)) {
+    return candidateDev;
+  }
+  return path.resolve(__dirname, '../../..', 'src', 'generator', 'build_app.py');
 }
 
 function createWindow() {
@@ -114,7 +121,7 @@ ipcMain.handle('show-in-finder', (event, filePath) => {
 
 ipcMain.handle('build-app', async (event, params) => {
   return new Promise((resolve) => {
-    const pythonScript = path.join(getProjectRoot(), 'src', 'generator', 'build_app.py');
+    const pythonScript = getBuildScriptPath();
     const args = [
       pythonScript,
       '--name', params.name,
@@ -141,7 +148,7 @@ ipcMain.handle('build-app', async (event, params) => {
     }
 
     const pyProc = spawn('python3', args, {
-      cwd: getProjectRoot(),
+      cwd: path.dirname(pythonScript),
       env: process.env
     });
 
@@ -158,9 +165,8 @@ ipcMain.handle('build-app', async (event, params) => {
 
     pyProc.on('close', (code) => {
       if (code === 0) {
-        // Extract App Path from output
         const match = output.match(/App Path\s*:\s*(.*)/);
-        const appPath = match ? match[1].trim() : (params.install ? path.join(app.getPath('home'), 'Applications', `${params.name}.app`) : path.join(getProjectRoot(), `${params.name}.app`));
+        const appPath = match ? match[1].trim() : (params.install ? path.join(app.getPath('home'), 'Applications', `${params.name}.app`) : path.join(process.cwd(), `${params.name}.app`));
         resolve({ success: true, path: appPath, log: output });
       } else {
         resolve({ success: false, error: errorOutput || output || `Process exited with code ${code}` });

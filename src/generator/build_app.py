@@ -9,7 +9,7 @@ import subprocess
 import plistlib
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+# Add current generator directory to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from icon_processor import generate_icon_for_app, convert_image_to_icns
 
@@ -20,11 +20,26 @@ def create_bundle_id(name):
     slug = re.sub(r'[^a-zA-Z0-9]', '', name).lower()
     return f"com.webtoapp.{slug}"
 
+def get_template_dir():
+    candidates = [
+        Path(__file__).resolve().parent.parent / "template",
+        Path(__file__).resolve().parent.parent.parent / "src" / "template",
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    return candidates[0]
+
 def get_electron_base_app():
-    base_app = BASE_DIR / "node_modules" / "electron" / "dist" / "Electron.app"
-    if not base_app.exists():
-        raise FileNotFoundError(f"Electron base app not found at {base_app}. Please run npm install electron.")
-    return base_app
+    candidates = [
+        Path(__file__).resolve().parent.parent / "electron-base" / "Electron.app",
+        Path(__file__).resolve().parent.parent.parent / "node_modules" / "electron" / "dist" / "Electron.app",
+        Path(__file__).resolve().parent.parent / "node_modules" / "electron" / "dist" / "Electron.app"
+    ]
+    for c in candidates:
+        if c.exists():
+            return c
+    raise FileNotFoundError(f"Electron base app not found. Checked: {[str(x) for x in candidates]}")
 
 def build_application(
     name,
@@ -87,7 +102,7 @@ def build_application(
     app_pkg_dir = os.path.join(resources_dir, "app")
     os.makedirs(app_pkg_dir, exist_ok=True)
 
-    template_dir = BASE_DIR / "src" / "template"
+    template_dir = get_template_dir()
     shutil.copy2(str(template_dir / "package.json"), os.path.join(app_pkg_dir, "package.json"))
     shutil.copy2(str(template_dir / "main.js"), os.path.join(app_pkg_dir, "main.js"))
     shutil.copy2(str(template_dir / "preload.js"), os.path.join(app_pkg_dir, "preload.js"))
