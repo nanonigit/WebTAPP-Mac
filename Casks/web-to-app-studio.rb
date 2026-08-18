@@ -9,4 +9,10 @@ cask "web-to-app-studio" do
   homepage "https://github.com/nanonigit/web-to-app"
 
   app "Web-to-App Studio.app"
+
+  postflight do
+    system_command "/usr/bin/xattr",
+                   args: ["-cr", "#{appdir}/Web-to-App Studio.app"],
+                   sudo: false
+  end
 end
