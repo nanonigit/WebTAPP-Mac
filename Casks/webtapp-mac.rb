@@ -1,6 +1,6 @@
 cask "webtapp-mac" do
-  version "1.0.2"
-  sha256 "9b8f56ae04d695d12d18ee1c88a9a7eb8d376a0667888c8b696f7f4cc1027c55"
+  version "1.1.0"
+  sha256 "e9a97d74922d41fa36c517753a38ff1fda48ee4135d910caaf427b08ebaa6b88"
 
   url "https://github.com/nanonigit/WebTAPP-Mac/releases/download/v#{version}/WebTAPP-Mac-v#{version}.zip"
 
