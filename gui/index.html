@@ -6,62 +6,46 @@
   <title>WebTAPP Mac</title>
   <style>
     /* ==========================================================================
-       WebTAPP Mac — Semantic Color Architecture & Design Tokens
-       Based on Company DESIGN.md (Near-Black Precision), NetworkPNTR Mac, & WebTPDF Mac
-       Every color has an explicit functional meaning (Zero Decorative Colors):
-       - Surface Hierarchy (Luminance-based elevation without drop shadows):
-         * --surface-lowest (#08090a): Deep canvas & recessed input fields
-         * --surface-base   (#111214): Primary cards, panels, & sidebar
-         * --surface-elevated (#1d1e20): Hover surfaces, active tabs, & popovers
-       - Semantic Status & Workflow Colors:
-         * --color-action   (#5e6ad2): Indigo/Blue — Primary actionable step (Step ④ Build / Active nav)
-         * --color-ready    (#10b981): Emerald Green — Validated input, ready step (①–③), & runtime healthy
-         * --color-attention(#f59e0b): Amber Orange — Missing required input (needsInput), queued, or warning
-         * --color-danger   (#ef4444): Crimson Red — Build error, failed dependency, or destructive action
-         * --color-isolation(#a855f7): Purple — Session isolation (`persist:bundleId`) & Chromium OAuth Engine
-         * --color-metric   (#06b6d4): Cyan — Quantitative metrics (disk size, window dimensions, counts)
+       WebTAPP Mac — Calm Native macOS Color Architecture (WebTPDF Mac Standard)
+       95% of the interface uses calm neutral macOS surfaces and borders.
+       Color is strictly reserved for 3 functional states (matching WebTPDF Mac):
+       1. Accent Blue (#0A84FF): Selected sidebar item, Primary CTA, & Step ④ Action Ready
+       2. Calm Green  (#30D158): Step ①–③ Ready (8% subtle fill) & healthy status dot
+       3. Warm Orange (#FF9F0A): Missing required input (Step ① needsInput) or warning
        ========================================================================== */
     :root {
-      --surface-lowest: #08090a;
-      --surface-base: #111214;
-      --surface-elevated: #1d1e20;
-      --border-subtle: rgba(255, 255, 255, 0.06);
-      --border-strong: rgba(255, 255, 255, 0.14);
+      --bg-window: #1c1c1e;
+      --bg-sidebar: #242426;
+      --bg-group: #252528;
+      --bg-control: #161618;
+      --bg-elevated: #2f2f33;
 
-      --text-primary: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-control: rgba(255, 255, 255, 0.14);
 
-      /* Semantic Functional Colors */
-      --color-action: #5e6ad2;
-      --color-action-hover: #6e7ae2;
-      --color-action-bg: rgba(94, 106, 210, 0.16);
-      --color-action-border: rgba(94, 106, 210, 0.78);
+      --text-primary: rgba(255, 255, 255, 0.90);
+      --text-secondary: rgba(255, 255, 255, 0.56);
+      --text-tertiary: rgba(255, 255, 255, 0.36);
 
-      --color-ready: #10b981;
-      --color-ready-bg: rgba(16, 185, 129, 0.09);
-      --color-ready-border: rgba(16, 185, 129, 0.45);
+      /* Strictly 3 Functional Colors (Exact WebTPDF Mac opacity & restraint) */
+      --accent-blue: #0a84ff;
+      --accent-blue-hover: #2492ff;
+      --accent-blue-bg: rgba(10, 132, 255, 0.16);
+      --accent-blue-border: rgba(10, 132, 255, 0.72);
 
-      --color-attention: #f59e0b;
-      --color-attention-bg: rgba(245, 158, 11, 0.13);
-      --color-attention-border: rgba(245, 158, 11, 0.72);
+      --state-green: #30d158;
+      --state-green-bg: rgba(48, 209, 88, 0.08);
+      --state-green-border: rgba(48, 209, 88, 0.40);
 
-      --color-danger: #ef4444;
-      --color-danger-bg: rgba(239, 68, 68, 0.12);
-      --color-danger-border: rgba(239, 68, 68, 0.65);
+      --state-orange: #ff9f0a;
+      --state-orange-bg: rgba(255, 159, 10, 0.12);
+      --state-orange-border: rgba(255, 159, 10, 0.65);
 
-      --color-isolation: #a855f7;
-      --color-isolation-bg: rgba(168, 85, 247, 0.12);
-      --color-isolation-border: rgba(168, 85, 247, 0.45);
-
-      --color-metric: #06b6d4;
-      --color-metric-bg: rgba(6, 182, 212, 0.12);
-
-      --radius-base: 8px;
+      --radius-sm: 6px;
+      --radius-md: 8px;
       --radius-lg: 10px;
-      --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
-      --font-mono: "SF Mono", "JetBrains Mono", Menlo, monospace;
-      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", sans-serif;
+      --font-mono: "SF Mono", Menlo, monospace;
     }
 
     * {
@@ -73,8 +57,8 @@
 
     body {
       font-family: var(--font-sans);
-      font-size: 14px;
-      background-color: var(--surface-lowest);
+      font-size: 13px;
+      background-color: var(--bg-window);
       color: var(--text-primary);
       height: 100vh;
       display: flex;
@@ -83,15 +67,15 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Top Native macOS Toolbar (Draggable) */
+    /* Native macOS Window Toolbar */
     .app-toolbar {
-      height: 48px;
-      background-color: var(--surface-base);
+      height: 46px;
+      background-color: var(--bg-sidebar);
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px 0 88px;
+      padding: 0 18px 0 88px;
       -webkit-app-region: drag;
       flex-shrink: 0;
     }
@@ -106,119 +90,58 @@
       font-size: 14px;
       font-weight: 600;
       color: var(--text-primary);
-      letter-spacing: -0.2px;
     }
 
-    .toolbar-status-pill {
-      display: inline-flex;
+    .toolbar-operation {
+      display: none;
       align-items: center;
       gap: 6px;
-      padding: 3px 10px;
-      border-radius: 6px;
       font-size: 12px;
-      font-weight: 500;
-      background: var(--color-ready-bg);
-      border: 1px solid var(--color-ready-border);
-      color: var(--color-ready);
-    }
-
-    .toolbar-status-pill.running {
-      background: var(--color-action-bg);
-      border-color: var(--color-action-border);
-      color: #8b95f6;
-    }
-
-    .toolbar-status-pill.attention {
-      background: var(--color-attention-bg);
-      border-color: var(--color-attention-border);
-      color: var(--color-attention);
+      color: var(--text-secondary);
     }
 
     .toolbar-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       -webkit-app-region: no-drag;
     }
 
-    /* WebTPDF Mac Style Update App Button Widget */
-    .update-app-widget {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      -webkit-app-region: no-drag;
-    }
-
-    .update-app-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 1px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-secondary);
-      line-height: 1.25;
-      white-space: nowrap;
-    }
-
-    .update-app-meta .ver-text {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    .lang-toggle {
-      background: var(--surface-lowest);
-      border: 1px solid var(--border-strong);
-      color: var(--text-primary);
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background var(--transition-fast);
-    }
-
-    .lang-toggle:hover {
-      background: var(--surface-elevated);
-    }
-
-    /* SplitView Layout (NetworkPNTR & WebTPDF style) */
+    /* SplitView Layout */
     .split-layout {
       display: flex;
       flex: 1;
       overflow: hidden;
     }
 
-    /* Left Sidebar */
+    /* Left Sidebar (macOS NavigationSplitView style) */
     .sidebar {
-      width: 224px;
-      background-color: var(--surface-base);
+      width: 215px;
+      background-color: var(--bg-sidebar);
       border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 16px 12px;
+      padding: 14px 10px;
       flex-shrink: 0;
     }
 
     .nav-section {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .nav-section-header {
       font-size: 11px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
+      color: var(--text-tertiary);
       padding: 0 10px;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .nav-list {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
 
     .nav-item {
@@ -226,188 +149,121 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: 8px 10px;
-      border-radius: var(--radius-base);
-      border: 1px solid transparent;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      border: none;
       background: transparent;
-      color: var(--text-secondary);
+      color: var(--text-primary);
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 400;
       cursor: pointer;
       text-align: left;
-      transition: all var(--transition-fast);
     }
 
-    .nav-item:hover {
-      background: var(--surface-elevated);
-      color: var(--text-primary);
+    .nav-item:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .nav-item.active {
-      background: var(--color-action-bg);
-      border-color: var(--color-action-border);
-      color: var(--text-primary);
-      font-weight: 600;
+      background: var(--accent-blue);
+      color: #ffffff;
+      font-weight: 500;
     }
 
     .nav-item-left {
       display: flex;
       align-items: center;
-      gap: 9px;
-    }
-
-    .nav-badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 1px 6px;
-      border-radius: 4px;
-      background: var(--surface-elevated);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .nav-badge.amber {
-      background: var(--color-attention-bg);
-      color: var(--color-attention);
-      border-color: var(--color-attention-border);
-    }
-
-    /* Sidebar Footer (NetworkPNTR Runtime Shield status) */
-    .sidebar-footer {
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 12px;
-      display: flex;
-      flex-direction: column;
       gap: 8px;
     }
 
-    .runtime-shield {
+    .nav-icon {
+      width: 16px;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .nav-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .nav-item.active .nav-count {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Sidebar Footer (NetworkPNTR subtle runtime caption) */
+    .sidebar-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 10px 8px 2px 8px;
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 10px;
-      border-radius: var(--radius-base);
-      background: var(--surface-lowest);
-      border: 1px solid var(--border-subtle);
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-secondary);
       cursor: pointer;
     }
 
-    .runtime-shield:hover {
-      border-color: var(--border-strong);
+    .sidebar-footer:hover {
+      color: var(--text-primary);
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background-color: var(--color-ready);
+      background-color: var(--text-tertiary);
       flex-shrink: 0;
     }
 
-    .status-dot.amber { background-color: var(--color-attention); }
-    .status-dot.red { background-color: var(--color-danger); }
-    .status-dot.indigo { background-color: var(--color-action); }
+    .status-dot.green { background-color: var(--state-green); }
+    .status-dot.orange { background-color: var(--state-orange); }
+    .status-dot.blue { background-color: var(--accent-blue); }
 
-    /* Main Content Area */
+    /* Main Detail Area */
     .detail-pane {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 32px 40px 32px;
+      padding: 26px 30px 36px 30px;
     }
 
     .detail-container {
-      max-width: 1040px;
+      max-width: 960px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 22px;
     }
 
     .view-section {
       display: none;
       flex-direction: column;
-      gap: 24px;
+      gap: 22px;
     }
 
     .view-section.active {
       display: flex;
     }
 
-    /* Page Header */
-    .page-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .page-title {
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      margin-bottom: 4px;
-    }
-
-    .page-subtitle {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
-    /* Color Rationale Legend Strip */
-    .color-legend-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
-      background: var(--surface-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-base);
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .legend-label {
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-right: 4px;
-    }
-
-    .legend-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-    }
-
-    .legend-swatch {
-      width: 9px;
-      height: 9px;
-      border-radius: 2px;
-    }
-
     /* WebTPDF Mac Style Topology Pipeline Bar (① → ② → ③ → ④) */
-    .topology-bar {
+    .topology-container {
       display: grid;
       grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
       align-items: stretch;
       gap: 10px;
-      padding: 16px;
-      background: var(--surface-base);
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
+      border-radius: 12px;
     }
 
-    .topology-arrow {
+    .topology-chevron {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-muted);
+      color: var(--text-tertiary);
       font-size: 14px;
-      font-weight: 600;
     }
 
     .topology-card {
@@ -418,55 +274,52 @@
       text-align: center;
       gap: 5px;
       padding: 12px 10px;
-      border-radius: var(--radius-base);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-subtle);
-      background: var(--surface-lowest);
+      background: rgba(255, 255, 255, 0.03);
       cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .topology-card:hover:not(.state-disabled) {
-      transform: translateY(-1px);
+      transition: opacity 0.15s ease, border-color 0.15s ease;
     }
 
     .topology-icon {
-      font-size: 18px;
-      line-height: 1;
+      font-size: 17px;
+      line-height: 1.1;
     }
 
     .topology-title {
       font-size: 13px;
       font-weight: 600;
+      color: var(--text-primary);
     }
 
     .topology-detail {
       font-size: 11px;
-      font-family: var(--font-mono);
-      max-width: 180px;
+      color: var(--text-secondary);
+      max-width: 175px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* Semantic Topology States (Exact WebTPDF Mac semantics) */
+    /* Exact WebTPDF Mac 4 Card States */
     .topology-card.state-needs-input {
-      background: var(--color-attention-bg);
-      border: 1.5px solid var(--color-attention-border);
+      background: var(--state-orange-bg);
+      border: 1.5px solid var(--state-orange-border);
     }
     .topology-card.state-needs-input .topology-icon,
     .topology-card.state-needs-input .topology-title {
-      color: var(--color-attention);
+      color: var(--state-orange);
     }
     .topology-card.state-needs-input .topology-detail {
-      color: rgba(245, 158, 11, 0.9);
+      color: rgba(255, 159, 10, 0.9);
     }
 
     .topology-card.state-ready {
-      background: var(--color-ready-bg);
-      border: 1px solid var(--color-ready-border);
+      background: var(--state-green-bg);
+      border: 1px solid var(--state-green-border);
     }
     .topology-card.state-ready .topology-icon {
-      color: var(--color-ready);
+      color: var(--state-green);
     }
     .topology-card.state-ready .topology-title {
       color: var(--text-primary);
@@ -476,101 +329,62 @@
     }
 
     .topology-card.state-action-ready {
-      background: var(--color-action-bg);
-      border: 1.5px solid var(--color-action-border);
+      background: var(--accent-blue-bg);
+      border: 1.5px solid var(--accent-blue-border);
     }
-    .topology-card.state-action-ready .topology-icon,
+    .topology-card.state-action-ready .topology-icon {
+      color: var(--accent-blue);
+    }
     .topology-card.state-action-ready .topology-title {
-      color: #8b95f6;
+      color: var(--text-primary);
     }
     .topology-card.state-action-ready .topology-detail {
-      color: var(--text-primary);
+      color: var(--text-secondary);
     }
 
     .topology-card.state-disabled {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-subtle);
-      opacity: 0.48;
-      cursor: not-allowed;
+      opacity: 0.5;
+      cursor: default;
     }
     .topology-card.state-disabled .topology-icon,
     .topology-card.state-disabled .topology-title,
     .topology-card.state-disabled .topology-detail {
-      color: var(--text-muted);
-    }
-
-    /* NetworkPNTR Mac Style Summary Cards Grid */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .summary-card {
-      background: var(--surface-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-base);
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: border-color var(--transition-fast);
-    }
-
-    .summary-card:hover {
-      border-color: var(--border-strong);
-    }
-
-    .summary-label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .summary-value {
-      font-size: 22px;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      letter-spacing: -0.5px;
-      color: var(--text-primary);
-    }
-
-    .summary-detail {
-      font-size: 11px;
       color: var(--text-secondary);
-      line-height: 1.4;
     }
 
-    /* GroupBox / Panel Container */
-    .group-box {
-      background: var(--surface-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
+    /* Native macOS GroupBox */
+    .group-box-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 7px;
     }
 
     .group-box-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      padding: 0 2px;
     }
 
-    .group-box-title {
-      font-size: 14px;
+    .group-box-label {
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    /* Presets Strip */
+    .group-box {
+      background: var(--bg-group);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Calm Quick Presets */
     .presets-grid {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
@@ -578,37 +392,35 @@
     }
 
     .preset-btn {
-      background: var(--surface-lowest);
+      background: var(--bg-control);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-base);
-      padding: 10px 6px;
+      border-radius: var(--radius-md);
+      padding: 9px 6px;
       color: var(--text-primary);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       cursor: pointer;
-      transition: all var(--transition-fast);
       font-size: 11px;
       font-weight: 500;
     }
 
     .preset-btn:hover {
-      background: var(--surface-elevated);
-      border-color: var(--border-strong);
+      background: var(--bg-elevated);
+      border-color: var(--border-control);
     }
 
     .preset-btn.selected {
-      background: var(--color-ready-bg);
-      border-color: var(--color-ready-border);
-      color: var(--color-ready);
+      border-color: var(--accent-blue);
+      background: var(--accent-blue-bg);
     }
 
     .preset-icon {
-      font-size: 18px;
+      font-size: 16px;
     }
 
-    /* Form Controls */
+    /* Clean Form Fields (No noisy colored borders or badges on inputs) */
     .form-grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -624,57 +436,26 @@
     .field-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
-    .field-label {
+    .field-caption {
       font-size: 12px;
-      font-weight: 600;
       color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .field-tag {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-
-    .field-tag.required {
-      background: var(--color-attention-bg);
-      color: var(--color-attention);
-      border: 1px solid var(--color-attention-border);
-    }
-
-    .field-tag.ready {
-      background: var(--color-ready-bg);
-      color: var(--color-ready);
-      border: 1px solid var(--color-ready-border);
-    }
-
-    .field-tag.isolation {
-      background: var(--color-isolation-bg);
-      color: #c084fc;
-      border: 1px solid var(--color-isolation-border);
     }
 
     input[type="text"],
     input[type="url"],
     input[type="number"] {
       width: 100%;
-      background: var(--surface-lowest);
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-base);
-      padding: 9px 12px;
+      background: var(--bg-control);
+      border: 1px solid var(--border-control);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
       font-size: 13px;
       color: var(--text-primary);
       font-family: var(--font-sans);
       user-select: text;
-      transition: border-color var(--transition-fast);
     }
 
     input.mono-input {
@@ -684,70 +465,40 @@
 
     input:focus {
       outline: none;
-      border-color: var(--color-action);
+      border-color: var(--accent-blue);
     }
 
-    input.input-needs-attention {
-      border-color: var(--color-attention-border);
-    }
-
-    input.input-valid {
-      border-color: var(--color-ready-border);
-    }
-
-    .input-with-btn {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* Segmented Controls & Option Toggles */
-    .options-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .toggle-card {
+    .inline-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 12px;
-      background: var(--surface-lowest);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-base);
-      cursor: pointer;
-      transition: border-color var(--transition-fast);
     }
 
-    .toggle-card:hover {
-      border-color: var(--border-strong);
-    }
-
-    .toggle-card input[type="checkbox"] {
-      accent-color: var(--color-ready);
-      width: 15px;
-      height: 15px;
-      cursor: pointer;
-    }
-
-    .toggle-card-text {
+    .checkbox-row {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding-top: 2px;
     }
 
-    .toggle-card-title {
-      font-size: 12px;
-      font-weight: 600;
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
       color: var(--text-primary);
+      cursor: pointer;
     }
 
-    .toggle-card-desc {
-      font-size: 11px;
-      color: var(--text-secondary);
+    .checkbox-label input[type="checkbox"] {
+      accent-color: var(--accent-blue);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
     }
 
-    /* Buttons */
+    /* Native macOS Buttons */
     .btn-row {
       display: flex;
       align-items: center;
@@ -759,70 +510,117 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      padding: 8px 14px;
-      border-radius: var(--radius-base);
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      border: 1px solid var(--border-strong);
-      background: transparent;
+      border: 1px solid var(--border-control);
+      background: var(--bg-elevated);
       color: var(--text-primary);
-      transition: all var(--transition-fast);
       white-space: nowrap;
     }
 
     .btn:hover:not(:disabled) {
-      background: var(--surface-elevated);
+      background: #3a3a3f;
     }
 
     .btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
+      opacity: 0.4;
+      cursor: default;
     }
 
     .btn-primary {
-      background: var(--color-action);
-      border-color: var(--color-action);
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
       color: #ffffff;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: var(--color-action-hover);
+      background: var(--accent-blue-hover);
     }
 
-    .btn-ready {
-      background: var(--color-ready-bg);
-      border-color: var(--color-ready-border);
-      color: var(--color-ready);
+    .btn-warning {
+      background: var(--state-orange);
+      border-color: var(--state-orange);
+      color: #111111;
+      font-weight: 600;
     }
 
-    .btn-ready:hover:not(:disabled) {
-      background: rgba(16, 185, 129, 0.18);
+    .btn-borderless {
+      background: transparent;
+      border-color: transparent;
+      color: var(--text-secondary);
+      padding: 4px 8px;
     }
 
-    .btn-attention {
-      background: var(--color-attention-bg);
-      border-color: var(--color-attention-border);
-      color: var(--color-attention);
-    }
-
-    .btn-attention:hover:not(:disabled) {
-      background: rgba(245, 158, 11, 0.22);
-    }
-
-    .btn-danger {
-      background: var(--color-danger-bg);
-      border-color: var(--color-danger-border);
-      color: var(--color-danger);
+    .btn-borderless:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
     }
 
     .btn-sm {
-      padding: 5px 10px;
+      padding: 4px 10px;
       font-size: 12px;
     }
 
-    /* Tables / Lists for Queue, History, Installed Apps, & Runtime */
+    /* Update App Widget (Exact WebTPDF Mac Layout) */
+    .update-app-widget {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .update-app-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.25;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Calm Summary Cards (Dashboard) */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .summary-card {
+      background: var(--bg-group);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .summary-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+
+    .summary-detail {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* Lists & Dividers (WebTPDF GroupBox rows) */
     .data-list {
       display: flex;
       flex-direction: column;
@@ -833,7 +631,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 10px 6px;
+      padding: 9px 4px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
@@ -852,18 +650,15 @@
     .data-row-info {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
       min-width: 0;
       flex: 1;
     }
 
     .data-row-title {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 500;
       color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -871,7 +666,6 @@
 
     .data-row-meta {
       font-size: 11px;
-      font-family: var(--font-mono);
       color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
@@ -885,24 +679,23 @@
       flex-shrink: 0;
     }
 
-    .empty-state {
-      padding: 16px 8px;
+    .empty-caption {
       font-size: 12px;
       color: var(--text-secondary);
-      text-align: center;
+      padding: 4px 0;
     }
 
-    /* Terminal Log Box */
+    /* Log Box (WebTPDF style) */
     .log-console {
-      background: var(--surface-lowest);
+      background: var(--bg-control);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-base);
-      padding: 12px;
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11.5px;
       line-height: 1.55;
-      color: #d1d5db;
-      height: 170px;
+      color: var(--text-secondary);
+      height: 165px;
       overflow-y: auto;
       white-space: pre-wrap;
       user-select: text;
@@ -912,12 +705,30 @@
       height: 360px;
     }
 
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
     .spinner {
       border: 2px solid rgba(255, 255, 255, 0.25);
       border-top: 2px solid #ffffff;
       border-radius: 50%;
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
       animation: spin 0.75s linear infinite;
       display: inline-block;
     }
@@ -929,89 +740,74 @@
   </style>
 </head>
 <body>
-  <!-- Top macOS Window Toolbar -->
+  <!-- Native macOS Toolbar (Matches WebTPDF Mac toolbar) -->
   <div class="app-toolbar">
     <div class="toolbar-left">
-      <span class="toolbar-title" id="toolbar-view-title">Web → Mac App 作成</span>
-      <span class="toolbar-status-pill" id="toolbar-runtime-pill">
-        <span class="status-dot" id="toolbar-status-dot"></span>
-        <span id="toolbar-status-text">Chromium Engine Ready</span>
-      </span>
+      <span class="toolbar-title" id="toolbar-view-title">Web → App 作成</span>
+      <div class="toolbar-operation" id="toolbar-operation">
+        <span class="spinner"></span>
+        <span id="toolbar-operation-text">実行中</span>
+      </div>
     </div>
     <div class="toolbar-right">
-      <div class="update-app-widget">
-        <div class="update-app-meta">
-          <span class="ver-text" id="toolbar-update-ver">v1.1.0</span>
-          <span id="toolbar-update-checked">確認: 未確認</span>
-        </div>
-        <button class="btn btn-primary btn-sm" id="toolbar-update-btn" onclick="triggerAppSelfUpdate()">
-          <span>↓</span>
-          <span data-i18n="btn_update_app">アップデート</span>
-        </button>
-      </div>
-      <button class="lang-toggle" onclick="toggleLanguage()" id="lang-btn">日本語 / EN</button>
+      <button class="btn btn-sm" onclick="toggleLanguage()" id="lang-btn">日本語</button>
     </div>
   </div>
 
   <!-- SplitView Body -->
   <div class="split-layout">
-    <!-- Left Navigation Sidebar (NetworkPNTR & WebTPDF structure) -->
+    <!-- Left Sidebar (Exact WebTPDF Mac Section hierarchy: 機能 / システム) -->
     <aside class="sidebar">
       <div>
         <div class="nav-section">
-          <div class="nav-section-header" data-i18n="nav_features">機能 (Features)</div>
+          <div class="nav-section-header" data-i18n="nav_features">機能</div>
           <div class="nav-list">
-            <button class="nav-item active" data-view="builder" onclick="switchView('builder')">
-              <span class="nav-item-left">
-                <span>⚡</span>
-                <span data-i18n="nav_builder">Web → App 作成</span>
-              </span>
-              <span class="nav-badge amber" id="nav-queue-badge" style="display:none;">0</span>
-            </button>
             <button class="nav-item" data-view="dashboard" onclick="switchView('dashboard')">
               <span class="nav-item-left">
-                <span>▦</span>
+                <span class="nav-icon">⊞</span>
                 <span data-i18n="nav_dashboard">ダッシュボード</span>
               </span>
             </button>
+            <button class="nav-item active" data-view="builder" onclick="switchView('builder')">
+              <span class="nav-item-left">
+                <span class="nav-icon">⊕</span>
+                <span data-i18n="nav_builder">URL → App 作成</span>
+              </span>
+              <span class="nav-count" id="nav-queue-badge"></span>
+            </button>
             <button class="nav-item" data-view="library" onclick="switchView('library')">
               <span class="nav-item-left">
-                <span>📦</span>
-                <span data-i18n="nav_library">アプリライブラリ</span>
+                <span class="nav-icon">❐</span>
+                <span data-i18n="nav_library">App ライブラリ</span>
               </span>
-              <span class="nav-badge" id="nav-library-badge">0</span>
+              <span class="nav-count" id="nav-library-badge">0</span>
             </button>
           </div>
         </div>
 
         <div class="nav-section">
-          <div class="nav-section-header" data-i18n="nav_system">システム (System)</div>
+          <div class="nav-section-header" data-i18n="nav_system">システム</div>
           <div class="nav-list">
             <button class="nav-item" data-view="runtime" onclick="switchView('runtime')">
               <span class="nav-item-left">
-                <span>🛡️</span>
-                <span data-i18n="nav_runtime">実行環境・色彩設計</span>
+                <span class="nav-icon">⚙</span>
+                <span data-i18n="nav_runtime">実行環境</span>
               </span>
             </button>
             <button class="nav-item" data-view="logs" onclick="switchView('logs')">
               <span class="nav-item-left">
-                <span>⌘</span>
-                <span data-i18n="nav_logs">ビルドログ</span>
+                <span class="nav-icon">>_</span>
+                <span data-i18n="nav_logs">ログ</span>
               </span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- NetworkPNTR Style Runtime Shield Footer -->
-      <div class="sidebar-footer">
-        <div class="runtime-shield" onclick="switchView('runtime')" title="クリックして実行環境の診断を表示">
-          <span class="status-dot" id="footer-shield-dot"></span>
-          <div style="min-width:0;flex:1;">
-            <div style="font-weight:600;color:var(--text-primary);font-size:11px;" id="footer-shield-title">Chromium Isolated</div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="footer-shield-sub">persist:bundleId · OAuth OK</div>
-          </div>
-        </div>
+      <!-- Subtle Runtime Status Footer -->
+      <div class="sidebar-footer" onclick="switchView('runtime')">
+        <span class="status-dot green" id="footer-shield-dot"></span>
+        <span id="footer-shield-text">Chromium 実行環境: 準備完了</span>
       </div>
     </aside>
 
@@ -1019,368 +815,287 @@
     <main class="detail-pane">
       <div class="detail-container">
 
-        <!-- Semantic Color Rationale Legend Bar (Always transparent & purposeful) -->
-        <div class="color-legend-bar">
-          <span class="legend-label" data-i18n="legend_title">色彩設計 (Semantic Color):</span>
-          <span class="legend-chip"><span class="legend-swatch" style="background:var(--color-attention);"></span><span data-i18n="legend_amber">Amber = 要入力・待機中</span></span>
-          <span class="legend-chip"><span class="legend-swatch" style="background:var(--color-ready);"></span><span data-i18n="legend_emerald">Emerald = 準備完了・正常稼働</span></span>
-          <span class="legend-chip"><span class="legend-swatch" style="background:var(--color-action);"></span><span data-i18n="legend_indigo">Indigo = 実行アクション可能</span></span>
-          <span class="legend-chip"><span class="legend-swatch" style="background:var(--color-isolation);"></span><span data-i18n="legend_purple">Purple = セッション分離・OAuth保護</span></span>
-          <span class="legend-chip"><span class="legend-swatch" style="background:var(--color-danger);"></span><span data-i18n="legend_red">Red = エラー・削除</span></span>
-        </div>
-
         <!-- ==================================================================
-             VIEW 1: WEB -> APP BUILDER (WebTPDF Mac ① -> ② -> ③ -> ④ Pipeline)
+             VIEW 1: URL -> APP BUILDER (WebTPDF Mac Topology + GroupBoxes)
              ================================================================== -->
         <section class="view-section active" id="view-builder">
-          <div class="page-header">
-            <div>
-              <h1 class="page-title" data-i18n="builder_title">Web → Mac App 作成</h1>
-              <p class="page-subtitle" data-i18n="builder_subtitle">
-                ①〜③のステップを入力すると、④のビルドカードが Indigo（実行可能）に点灯します。カード自体のクリックでも操作・切替が可能です。
-              </p>
-            </div>
-          </div>
 
-          <!-- WebTPDF Mac Interactive 4-Step Topology Bar -->
-          <div class="topology-bar">
-            <div class="topology-card state-needs-input" id="topo-step-1" onclick="focusStep1()" title="クリックしてアプリ名とURLを入力">
+          <!-- WebTPDF Mac 4-Step Topology Bar (The ONLY place with step status colors) -->
+          <div class="topology-container">
+            <div class="topology-card state-needs-input" id="topo-step-1" onclick="focusStep1()" title="クリックしてアプリ名とURL入力欄へ移動">
               <div class="topology-icon">🌐</div>
-              <div class="topology-title" data-i18n="topo_1_title">① アプリ名・URL</div>
-              <div class="topology-detail" id="topo-1-detail">未入力 (要入力)</div>
+              <div class="topology-title" data-i18n="topo_1_title">① 名前・URL</div>
+              <div class="topology-detail" id="topo-1-detail">未入力</div>
             </div>
 
-            <div class="topology-arrow">›</div>
+            <div class="topology-chevron">›</div>
 
-            <div class="topology-card state-ready" id="topo-step-2" onclick="toggleStep2Titlebar()" title="クリックして通常枠 / 枠なしFull Viewを切り替え">
+            <div class="topology-card state-ready" id="topo-step-2" onclick="toggleStep2Titlebar()" title="クリックして標準枠 / 枠なし(Full View)を切り替え">
               <div class="topology-icon">🪟</div>
-              <div class="topology-title" data-i18n="topo_2_title">② ウィンドウ・外観</div>
+              <div class="topology-title" data-i18n="topo_2_title">② ウィンドウ外観</div>
               <div class="topology-detail" id="topo-2-detail">標準枠 · 1200×800</div>
             </div>
 
-            <div class="topology-arrow">›</div>
+            <div class="topology-chevron">›</div>
 
-            <div class="topology-card state-ready" id="topo-step-3" onclick="toggleStep3Install()" title="クリックして保存先 (~/Applications / カスタム) を切り替え">
-              <div class="topology-icon">🔒</div>
-              <div class="topology-title" data-i18n="topo_3_title">③ 分離・保存先</div>
-              <div class="topology-detail" id="topo-3-detail">~/Applications</div>
+            <div class="topology-card state-ready" id="topo-step-3" onclick="chooseCustomOutputDir()" title="クリックして保存先フォルダを変更">
+              <div class="topology-icon">📁</div>
+              <div class="topology-title" data-i18n="topo_3_title">③ 保存先</div>
+              <div class="topology-detail" id="topo-3-detail">Applications</div>
             </div>
 
-            <div class="topology-arrow">›</div>
+            <div class="topology-chevron">›</div>
 
-            <div class="topology-card state-disabled" id="topo-step-4" onclick="triggerBuildFromTopology()" title="クリックして独立Macアプリ(.app)をビルド">
-              <div class="topology-icon">🚀</div>
-              <div class="topology-title" data-i18n="topo_4_title">④ アプリ生成 / キュー</div>
-              <div class="topology-detail" id="topo-4-detail">①を入力してください</div>
-            </div>
-          </div>
-
-          <!-- Quick Presets -->
-          <div class="group-box">
-            <div class="group-box-header">
-              <div class="group-box-title">
-                <span>✨</span>
-                <span data-i18n="presets_title">クイックプリセット（Google OAuth / セッション分離対応）</span>
-              </div>
-              <span style="font-size:11px;color:var(--text-secondary);" data-i18n="presets_hint">クリックで ① に即時反映</span>
-            </div>
-            <div class="presets-grid">
-              <button type="button" class="preset-btn" data-preset="Google Notebook" onclick="selectPreset('Google Notebook', 'https://notebooklm.google.com', this)">
-                <span class="preset-icon">📔</span>
-                <span>NotebookLM</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="Messenger" onclick="selectPreset('Messenger', 'https://www.messenger.com', this)">
-                <span class="preset-icon">💬</span>
-                <span>Messenger</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="ChatGPT" onclick="selectPreset('ChatGPT', 'https://chatgpt.com', this)">
-                <span class="preset-icon">🤖</span>
-                <span>ChatGPT</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="Claude" onclick="selectPreset('Claude', 'https://claude.ai', this)">
-                <span class="preset-icon">🧠</span>
-                <span>Claude</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="Notion" onclick="selectPreset('Notion', 'https://www.notion.so', this)">
-                <span class="preset-icon">📄</span>
-                <span>Notion</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="note" onclick="selectPreset('note', 'https://note.com', this)">
-                <span class="preset-icon">📝</span>
-                <span>note</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="Discord" onclick="selectPreset('Discord', 'https://discord.com/app', this)">
-                <span class="preset-icon">🎮</span>
-                <span>Discord</span>
-              </button>
-              <button type="button" class="preset-btn" data-preset="YouTube Music" onclick="selectPreset('YouTube Music', 'https://music.youtube.com', this)">
-                <span class="preset-icon">🎵</span>
-                <span>YT Music</span>
-              </button>
+            <div class="topology-card state-disabled" id="topo-step-4" onclick="triggerBuildFromTopology()" title="クリックしてMacアプリ(.app)生成を実行">
+              <div class="topology-icon">⬇</div>
+              <div class="topology-title" data-i18n="topo_4_title">④ アプリ保存 / キュー</div>
+              <div class="topology-detail" id="topo-4-detail">①〜③を設定してください</div>
             </div>
           </div>
 
-          <!-- Configuration Form Box -->
-          <div class="group-box">
+          <!-- App Creation Settings GroupBox -->
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span>⚙️</span>
-                <span data-i18n="form_section_title">アプリ構成設定</span>
-              </div>
-              <span class="field-tag isolation" id="isolation-preview-tag">persist:com.webtoapp.app</span>
+              <span class="group-box-label" data-i18n="box_settings">アプリ作成設定</span>
             </div>
-
-            <form id="app-form" onsubmit="handleBuild(event)" style="display:flex;flex-direction:column;gap:16px;">
-              <!-- Step 1: Name & URL -->
-              <div class="form-grid-2">
-                <div class="field-group">
-                  <label class="field-label" for="name">
-                    <span data-i18n="label_app_name">① アプリ表示名 (.app名)</span>
-                    <span class="field-tag required" id="tag-name-state">要入力</span>
-                  </label>
-                  <input type="text" id="name" placeholder="例: Google Notebook" oninput="updateFormState()" required>
-                </div>
-
-                <div class="field-group">
-                  <label class="field-label" for="url">
-                    <span data-i18n="label_url">① 開始 URL (https://...)</span>
-                    <span class="field-tag required" id="tag-url-state">要入力</span>
-                  </label>
-                  <input type="url" id="url" class="mono-input" placeholder="https://notebooklm.google.com" oninput="updateFormState()" required>
-                </div>
-              </div>
-
-              <!-- Step 2: Icon & Window Dimensions -->
-              <div class="form-grid-3">
-                <div class="field-group">
-                  <label class="field-label" for="icon">
-                    <span data-i18n="label_icon">② アイコン画像 (空欄で高解像度Webアイコン自動抽出)</span>
-                    <span class="field-tag ready" id="tag-icon-state">自動抽出 Ready</span>
-                  </label>
-                  <div class="input-with-btn">
-                    <input type="text" id="icon" class="mono-input" placeholder="空欄 = WebからApple Touch Icon / Favicon自動取得" oninput="updateFormState()">
-                    <button type="button" class="btn btn-sm" onclick="browseIcon()" data-i18n="btn_browse">選択...</button>
-                  </div>
-                </div>
-
-                <div class="field-group">
-                  <label class="field-label" for="width">
-                    <span data-i18n="label_width">② 初期幅 (px)</span>
-                  </label>
-                  <input type="number" id="width" class="mono-input" value="1200" min="400" oninput="updateFormState()">
-                </div>
-
-                <div class="field-group">
-                  <label class="field-label" for="height">
-                    <span data-i18n="label_height">② 初期高さ (px)</span>
-                  </label>
-                  <input type="number" id="height" class="mono-input" value="800" min="300" oninput="updateFormState()">
+            <div class="group-box">
+              <!-- Quick Presets -->
+              <div class="field-group">
+                <span class="field-caption" data-i18n="presets_caption">クイックプリセット（クリックで①に自動入力）</span>
+                <div class="presets-grid">
+                  <button type="button" class="preset-btn" onclick="selectPreset('Google Notebook', 'https://notebooklm.google.com', this)">
+                    <span class="preset-icon">📔</span>
+                    <span>NotebookLM</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('Messenger', 'https://www.messenger.com', this)">
+                    <span class="preset-icon">💬</span>
+                    <span>Messenger</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('ChatGPT', 'https://chatgpt.com', this)">
+                    <span class="preset-icon">🤖</span>
+                    <span>ChatGPT</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('Claude', 'https://claude.ai', this)">
+                    <span class="preset-icon">🧠</span>
+                    <span>Claude</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('Notion', 'https://www.notion.so', this)">
+                    <span class="preset-icon">📄</span>
+                    <span>Notion</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('note', 'https://note.com', this)">
+                    <span class="preset-icon">📝</span>
+                    <span>note</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('Discord', 'https://discord.com/app', this)">
+                    <span class="preset-icon">🎮</span>
+                    <span>Discord</span>
+                  </button>
+                  <button type="button" class="preset-btn" onclick="selectPreset('YouTube Music', 'https://music.youtube.com', this)">
+                    <span class="preset-icon">🎵</span>
+                    <span>YT Music</span>
+                  </button>
                 </div>
               </div>
 
-              <!-- Step 3: Isolation Bundle ID & Save Location -->
-              <div class="form-grid-2">
-                <div class="field-group">
-                  <label class="field-label" for="bundleId">
-                    <span data-i18n="label_bundle_id">③ セッション分離 Bundle ID (空欄で自動生成)</span>
-                    <span class="field-tag isolation">Profile Sandbox</span>
+              <form id="app-form" onsubmit="handleBuild(event)" style="display:flex;flex-direction:column;gap:14px;">
+                <div class="form-grid-2">
+                  <div class="field-group">
+                    <label class="field-caption" for="name" data-i18n="label_app_name">① アプリ表示名（.app 名）</label>
+                    <input type="text" id="name" placeholder="Google Notebook" oninput="updateFormState()" required>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-caption" for="url" data-i18n="label_url">① ソース URL（Webサービス）</label>
+                    <input type="url" id="url" class="mono-input" placeholder="https://notebooklm.google.com" oninput="updateFormState()" required>
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="field-group">
+                    <label class="field-caption" for="icon" data-i18n="label_icon">② アイコン画像（省略時はサイトから自動取得）</label>
+                    <div class="inline-row">
+                      <input type="text" id="icon" class="mono-input" placeholder="空欄で自動抽出" oninput="updateFormState()">
+                      <button type="button" class="btn" onclick="browseIcon()" data-i18n="btn_browse">選択</button>
+                    </div>
+                  </div>
+                  <div class="field-group">
+                    <label class="field-caption" for="width" data-i18n="label_width">② 初期幅 (px)</label>
+                    <input type="number" id="width" class="mono-input" value="1200" min="400" oninput="updateFormState()">
+                  </div>
+                  <div class="field-group">
+                    <label class="field-caption" for="height" data-i18n="label_height">② 初期高さ (px)</label>
+                    <input type="number" id="height" class="mono-input" value="800" min="300" oninput="updateFormState()">
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field-group">
+                    <label class="field-caption" for="bundleId" data-i18n="label_bundle_id">③ Bundle ID（省略時は自動生成・独立セッション領域）</label>
+                    <input type="text" id="bundleId" class="mono-input" placeholder="com.webtoapp.googlenotebook" oninput="updateFormState()">
+                  </div>
+                  <div class="field-group">
+                    <label class="field-caption" data-i18n="label_output_dir">③ 保存先フォルダ</label>
+                    <div class="inline-row">
+                      <input type="text" id="customOutputDir" class="mono-input" value="~/Applications" readonly>
+                      <button type="button" class="btn" onclick="chooseCustomOutputDir()" data-i18n="btn_change_folder">変更</button>
+                      <button type="button" class="btn" id="reset-dir-btn" onclick="resetOutputDir()" style="display:none;" data-i18n="btn_reset_apps">標準に戻す</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="checkbox-row">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="install" checked onchange="onInstallToggleChange()">
+                    <span data-i18n="opt_install">~/Applications に直接インストール</span>
                   </label>
-                  <input type="text" id="bundleId" class="mono-input" placeholder="com.webtoapp.googlenotebook" oninput="updateFormState()">
-                </div>
-
-                <div class="field-group">
-                  <label class="field-label" for="customOutputDir">
-                    <span data-i18n="label_output_dir">③ 出力先フォルダ</span>
-                    <span class="field-tag ready" id="tag-output-state">~/Applications</span>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="hiddenTitlebar" onchange="updateFormState()">
+                    <span data-i18n="opt_titlebar">枠なしタイトルバー (Full View)</span>
                   </label>
-                  <div class="input-with-btn">
-                    <input type="text" id="customOutputDir" class="mono-input" value="~/Applications" readonly>
-                    <button type="button" class="btn btn-sm" onclick="chooseCustomOutputDir()" data-i18n="btn_change_folder">変更...</button>
-                    <button type="button" class="btn btn-sm" onclick="resetOutputDir()" data-i18n="btn_reset_apps">標準に戻す</button>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="startMaximized" onchange="updateFormState()">
+                    <span data-i18n="opt_maximized">起動時にウィンドウを最大化</span>
+                  </label>
+                </div>
+
+                <div class="btn-row" style="padding-top:4px;">
+                  <button type="submit" id="submit-btn" class="btn btn-primary" disabled data-i18n="btn_build_now">④ URLからアプリ作成</button>
+                  <button type="button" id="enqueue-btn" class="btn" onclick="enqueueCurrentApp()" disabled data-i18n="btn_add_queue">④ ＋ キューに追加</button>
+
+                  <div id="last-built-actions" style="display:none;align-items:center;gap:8px;margin-left:auto;">
+                    <span style="font-size:12px;color:var(--state-green);" id="last-built-label">✓ 完了</span>
+                    <button type="button" class="btn btn-sm" onclick="launchLastBuiltApp()" data-i18n="btn_open">開く</button>
+                    <button type="button" class="btn btn-sm" onclick="openLastBuiltInFinder()">Finder</button>
                   </div>
                 </div>
-              </div>
-
-              <!-- Toggles Row -->
-              <div class="options-row">
-                <label class="toggle-card">
-                  <input type="checkbox" id="install" checked onchange="onInstallToggleChange()">
-                  <div class="toggle-card-text">
-                    <span class="toggle-card-title" data-i18n="opt_install_title">~/Applications に直接配置</span>
-                    <span class="toggle-card-desc" data-i18n="opt_install_desc">Spotlight / Launchpad から即座に起動可能</span>
-                  </div>
-                </label>
-
-                <label class="toggle-card">
-                  <input type="checkbox" id="hiddenTitlebar" onchange="updateFormState()">
-                  <div class="toggle-card-text">
-                    <span class="toggle-card-title" data-i18n="opt_titlebar_title">枠なしタイトルバー (Full View)</span>
-                    <span class="toggle-card-desc" data-i18n="opt_titlebar_desc">hiddenInset モダンベゼルレス外観</span>
-                  </div>
-                </label>
-
-                <label class="toggle-card">
-                  <input type="checkbox" id="startMaximized" onchange="updateFormState()">
-                  <div class="toggle-card-text">
-                    <span class="toggle-card-title" data-i18n="opt_max_title">起動時に最大化</span>
-                    <span class="toggle-card-desc" data-i18n="opt_max_desc">初回起動時からワークスペースを広く表示</span>
-                  </div>
-                </label>
-              </div>
-
-              <!-- Step 4: Action Bar (Build Immediately or Enqueue like WebTPDF) -->
-              <div class="btn-row">
-                <button type="submit" id="submit-btn" class="btn btn-primary" disabled>
-                  <span>🚀</span>
-                  <span data-i18n="btn_build_now">④ 独立Macアプリ（.app）を作成</span>
-                </button>
-
-                <button type="button" id="enqueue-btn" class="btn" onclick="enqueueCurrentApp()" disabled>
-                  <span>＋</span>
-                  <span data-i18n="btn_add_queue">④ 実行キューに追加</span>
-                </button>
-
-                <div id="last-built-actions" style="display:none;align-items:center;gap:8px;margin-left:auto;">
-                  <span style="font-size:12px;color:var(--color-ready);font-weight:600;" id="last-built-label">✓ 生成完了</span>
-                  <button type="button" class="btn btn-ready btn-sm" onclick="launchLastBuiltApp()" data-i18n="btn_launch_app">▶ アプリを起動</button>
-                  <button type="button" class="btn btn-sm" onclick="openLastBuiltInFinder()" data-i18n="btn_reveal_finder">📁 Finderで表示</button>
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
 
-          <!-- Execution Queue Section (WebTPDF Mac Pattern) -->
-          <div class="group-box">
+          <!-- Execution Queue GroupBox (Exact WebTPDF Mac pattern) -->
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span>📋</span>
-                <span id="queue-box-title">バッチ実行キュー (0件)</span>
-              </div>
-              <div class="btn-row">
-                <button type="button" class="btn btn-primary btn-sm" id="run-queue-btn" onclick="runQueue()" disabled data-i18n="btn_run_queue">キューを連続ビルド</button>
-                <button type="button" class="btn btn-sm" id="clear-queue-btn" onclick="clearFinishedQueue()" disabled data-i18n="btn_clear_done">完了済みを整理</button>
-              </div>
+              <span class="group-box-label" id="queue-box-title">実行キュー (0件)</span>
             </div>
-            <div id="queue-list-container" class="data-list">
-              <div class="empty-state" data-i18n="queue_empty">
-                複数のWebアプリをまとめて作る場合は「＋ 実行キューに追加」を押すと、順番に自動で .app 化できます。
+            <div class="group-box">
+              <div id="queue-list-container" class="data-list">
+                <div class="empty-caption" data-i18n="queue_empty">
+                  名前とURLを入力して「＋ キューに追加」を押すと、順番に自動でアプリ化できます。
+                </div>
+              </div>
+              <div class="btn-row" id="queue-controls-row" style="display:none;padding-top:4px;">
+                <button type="button" class="btn btn-primary btn-sm" id="run-queue-btn" onclick="runQueue()" data-i18n="btn_run_queue">キューを連続実行</button>
+                <button type="button" class="btn btn-sm" id="clear-queue-btn" onclick="clearFinishedQueue()" data-i18n="btn_clear_done">完了済みを整理</button>
               </div>
             </div>
           </div>
 
-          <!-- Compact Live Log Console -->
-          <div class="group-box">
+          <!-- Log GroupBox -->
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span>⌘</span>
-                <span data-i18n="live_log_title">ビルド・パッケージング出力ログ</span>
-              </div>
-              <button type="button" class="btn btn-sm" onclick="clearConsoleLog()" data-i18n="btn_clear_log">ログをクリア</button>
+              <span class="group-box-label" data-i18n="box_log">ログ</span>
             </div>
-            <div class="log-console" id="builder-log-console">Ready. Select a preset or enter a Web URL to package as a standalone macOS .app.</div>
+            <div class="group-box" style="padding:10px;">
+              <div class="log-console" id="builder-log-console">Ready.</div>
+            </div>
           </div>
         </section>
 
         <!-- ==================================================================
-             VIEW 2: DASHBOARD (NetworkPNTR & WebTPDF Metric Cards + Quick Health)
+             VIEW 2: DASHBOARD (WebTPDF Mac Dashboard layout)
              ================================================================== -->
         <section class="view-section" id="view-dashboard">
-          <div class="page-header">
-            <div>
-              <h1 class="page-title" data-i18n="dashboard_title">ダッシュボード</h1>
-              <p class="page-subtitle" data-i18n="dashboard_subtitle">
-                生成済みネイティブアプリ、Chromium 実行環境の健全性、および直近のビルド履歴を一覧監視します。
-              </p>
-            </div>
+          <!-- Top Shortcut & Self-Update Row (Exact WebTPDF Mac dashboardView top bar) -->
+          <div class="btn-row" style="justify-content:space-between;">
             <div class="btn-row">
-              <button class="btn btn-primary" onclick="switchView('builder')" data-i18n="btn_new_webapp">＋ 新規Webアプリ作成</button>
-              <button class="btn" onclick="refreshAllData()">↻ <span data-i18n="btn_reload">更新</span></button>
-              <div class="update-app-widget" style="margin-left:6px;padding-left:10px;border-left:1px solid var(--border-subtle);">
-                <div class="update-app-meta">
-                  <span class="ver-text" id="dash-update-ver">v1.1.0</span>
-                  <span id="dash-update-checked">確認: 未確認</span>
-                </div>
-                <button class="btn btn-primary btn-sm" id="dash-update-btn" onclick="triggerAppSelfUpdate()">
-                  <span>↓</span>
-                  <span data-i18n="btn_update_app">アップデート</span>
-                </button>
+              <button class="btn btn-primary" onclick="switchView('builder')" data-i18n="nav_builder">URL → App 作成</button>
+              <button class="btn" onclick="switchView('library')" data-i18n="nav_library">App ライブラリ</button>
+              <button class="btn" onclick="switchView('runtime')" data-i18n="nav_runtime">実行環境</button>
+            </div>
+            <div class="update-app-widget">
+              <div class="update-app-meta">
+                <span id="dash-update-ver">v1.1.17</span>
+                <span id="dash-update-checked">確認: 未確認</span>
               </div>
+              <button class="btn" id="dash-update-btn" onclick="triggerAppSelfUpdate()">
+                <span>↓</span>
+                <span data-i18n="btn_update_app">アップデート</span>
+              </button>
             </div>
           </div>
 
-          <!-- NetworkPNTR Style 4 Metric Summary Cards with purposeful color coding -->
+          <!-- Calm Summary Metrics -->
           <div class="summary-grid">
             <div class="summary-card">
-              <div class="summary-label" style="color:var(--color-ready);">
-                <span>📦</span>
-                <span data-i18n="metric_installed_title">インストール済み App</span>
-              </div>
+              <div class="summary-label" data-i18n="metric_installed_title">作成済みアプリ</div>
               <div class="summary-value" id="metric-installed-count">0</div>
-              <div class="summary-detail" id="metric-installed-detail">~/Applications 内の独立アプリ</div>
+              <div class="summary-detail" id="metric-installed-detail">~/Applications</div>
             </div>
-
             <div class="summary-card">
-              <div class="summary-label" style="color:var(--color-isolation);">
-                <span>🔒</span>
-                <span data-i18n="metric_isolation_title">分離プロファイル</span>
-              </div>
-              <div class="summary-value" id="metric-isolation-count">100%</div>
-              <div class="summary-detail" data-i18n="metric_isolation_detail">persist:bundleId 独立Cookie領域</div>
-            </div>
-
-            <div class="summary-card">
-              <div class="summary-label" style="color:var(--color-metric);">
-                <span>🛡️</span>
-                <span data-i18n="metric_runtime_title">ランタイム診断</span>
-              </div>
+              <div class="summary-label" data-i18n="metric_runtime_title">実行環境の準備</div>
               <div class="summary-value" id="metric-runtime-score">5 / 5</div>
-              <div class="summary-detail" id="metric-runtime-detail">Chromium & Icon Toolchain 正常</div>
+              <div class="summary-detail" id="metric-runtime-detail">すべて正常</div>
             </div>
-
             <div class="summary-card">
-              <div class="summary-label" style="color:var(--color-action);">
-                <span>⚡</span>
-                <span data-i18n="metric_history_title">累計ビルド実行</span>
-              </div>
+              <div class="summary-label" data-i18n="metric_isolation_title">セッション分離</div>
+              <div class="summary-value">有効</div>
+              <div class="summary-detail" data-i18n="metric_isolation_detail">アプリ別独立プロファイル</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label" data-i18n="metric_history_title">作成履歴</div>
               <div class="summary-value" id="metric-history-count">0</div>
-              <div class="summary-detail" id="metric-history-detail">直近のビルドエラー: 0件</div>
+              <div class="summary-detail" id="metric-history-detail">エラー: 0件</div>
             </div>
           </div>
 
-          <!-- Runtime Readiness Banner (WebTPDF Dashboard Pattern) -->
-          <div class="group-box">
+          <!-- Runtime Readiness Box (Exact WebTPDF Mac dashboardRuntimeBox) -->
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span id="dash-runtime-icon" style="color:var(--color-ready);">✓</span>
-                <span id="dash-runtime-headline">必要な実行環境はすべて揃っています（Chromium / sips / iconutil / codesign）</span>
-              </div>
-              <button class="btn btn-sm" onclick="switchView('runtime')" data-i18n="btn_view_runtime">実行環境を確認</button>
+              <span class="group-box-label" data-i18n="dash_runtime_box_title">実行環境の準備状況</span>
             </div>
-            <div id="dash-runtime-list" class="data-list"></div>
+            <div class="group-box">
+              <div class="inline-row" style="justify-content:space-between;">
+                <div class="inline-row">
+                  <span class="status-dot green" id="dash-runtime-dot"></span>
+                  <span id="dash-runtime-headline">必要な実行環境はすべて揃っています。</span>
+                </div>
+                <button class="btn btn-sm" onclick="switchView('runtime')" data-i18n="btn_view_runtime">実行環境を確認</button>
+              </div>
+              <div id="dash-runtime-list" class="data-list" style="border-top:1px solid var(--border-subtle);padding-top:6px;"></div>
+            </div>
           </div>
 
-          <!-- Recent Build History -->
-          <div class="group-box">
+          <!-- Build History Box -->
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span>🕒</span>
-                <span id="dash-history-title">直近のビルド履歴</span>
-              </div>
-              <button class="btn btn-sm" onclick="clearHistory()" id="clear-history-btn" data-i18n="btn_clear_history">履歴を消去</button>
+              <span class="group-box-label" id="dash-history-title">作成履歴 (0件)</span>
+              <button class="btn btn-sm" onclick="clearHistory()" data-i18n="btn_clear_history">履歴を全消去</button>
             </div>
-            <div id="dash-history-list" class="data-list"></div>
+            <div class="group-box">
+              <div id="dash-history-list" class="data-list"></div>
+            </div>
+          </div>
+
+          <!-- Log Box -->
+          <div class="group-box-wrapper">
+            <div class="group-box-header">
+              <span class="group-box-label" data-i18n="box_log">ログ</span>
+            </div>
+            <div class="group-box" style="padding:10px;">
+              <div class="log-console" id="dash-log-console">Ready.</div>
+            </div>
           </div>
         </section>
 
         <!-- ==================================================================
-             VIEW 3: APP LIBRARY (WebTPDF Library Pattern)
+             VIEW 3: APP LIBRARY (WebTPDF Mac libraryView style)
              ================================================================== -->
         <section class="view-section" id="view-library">
           <div class="page-header">
             <div>
-              <h1 class="page-title" data-i18n="library_title">生成済みアプリライブラリ (~/Applications)</h1>
+              <h1 class="page-title" data-i18n="library_title">App ライブラリ</h1>
               <p class="page-subtitle" data-i18n="library_subtitle">
-                WebTAPP Mac で作成された独立 macOS アプリの一覧です。その場で起動・設定再利用（再ビルド）・Finder表示・削除が行えます。
+                ~/Applications 内の作成済みアプリを開いたり、設定を読み込んで再作成したりできます。
               </p>
             </div>
             <div class="btn-row">
@@ -1389,115 +1104,95 @@
             </div>
           </div>
 
-          <div class="group-box">
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span>📦</span>
-                <span id="library-count-title">インストール済み WebTAPP アプリ (0件)</span>
-              </div>
+              <span class="group-box-label" id="library-count-title">アプリ一覧 (0件)</span>
             </div>
-            <div id="library-list-container" class="data-list"></div>
+            <div class="group-box">
+              <div id="library-list-container" class="data-list"></div>
+            </div>
           </div>
         </section>
 
         <!-- ==================================================================
-             VIEW 4: RUNTIME & COLOR ARCHITECTURE
+             VIEW 4: RUNTIME (WebTPDF Mac runtimeView + Calm Color Rationale)
              ================================================================== -->
         <section class="view-section" id="view-runtime">
           <div class="page-header">
             <div>
-              <h1 class="page-title" data-i18n="runtime_title">実行環境の診断 & 色彩設計（Color Rationale）</h1>
+              <h1 class="page-title" data-i18n="runtime_title">実行環境の診断</h1>
               <p class="page-subtitle" data-i18n="runtime_subtitle">
-                ネイティブアプリ生成に必要な macOS ツールチェーンの状態と、UI の各色が持つ機能的理由を確認します。
+                Webアプリのパッケージングに必要なコンポーネントの状態を確認します。
               </p>
-              <div id="runtime-last-updated-banner" style="display:none;margin-top:6px;font-size:12px;color:var(--color-ready);font-family:var(--font-mono);"></div>
+              <div id="runtime-last-updated-banner" style="display:none;margin-top:6px;font-size:12px;color:var(--state-green);"></div>
             </div>
-            <div class="btn-row">
-              <button class="btn" onclick="refreshRuntimeStatus()">↻ <span data-i18n="btn_recheck">再診断</span></button>
-              <div class="update-app-widget" style="margin-left:6px;padding-left:10px;border-left:1px solid var(--border-subtle);">
-                <div class="update-app-meta">
-                  <span class="ver-text" id="runtime-update-ver">v1.1.0</span>
-                  <span id="runtime-update-checked">確認: 未確認</span>
-                </div>
-                <button class="btn btn-primary btn-sm" id="runtime-update-btn" onclick="triggerAppSelfUpdate()">
-                  <span>↓</span>
-                  <span data-i18n="btn_update_app">アップデート</span>
-                </button>
-              </div>
+            <span style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);" id="runtime-version-label">現在バージョン: v1.1.17</span>
+          </div>
+
+          <div class="group-box-wrapper">
+            <div class="group-box-header">
+              <span class="group-box-label" data-i18n="runtime_checks_box">ランタイム診断</span>
+            </div>
+            <div class="group-box">
+              <div id="runtime-checks-list" class="data-list"></div>
             </div>
           </div>
 
-          <div class="group-box">
-            <div class="group-box-header">
-              <div class="group-box-title">
-                <span>🛡️</span>
-                <span data-i18n="runtime_checks_box">ランタイムコンポーネント診断</span>
+          <div class="btn-row" style="justify-content:space-between;">
+            <button class="btn" onclick="refreshRuntimeStatus()">↻ <span data-i18n="btn_recheck">再診断</span></button>
+            <div class="update-app-widget">
+              <div class="update-app-meta">
+                <span id="runtime-update-ver">v1.1.17</span>
+                <span id="runtime-update-checked">確認: 未確認</span>
               </div>
-              <span style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);" id="runtime-version-label">WebTAPP Mac v1.1.0</span>
+              <button class="btn btn-primary" id="runtime-update-btn" onclick="triggerAppSelfUpdate()">
+                <span>↓</span>
+                <span data-i18n="btn_update_app">アップデート</span>
+              </button>
             </div>
-            <div id="runtime-checks-list" class="data-list"></div>
           </div>
 
-          <!-- Explicit Color Rationale Table -->
-          <div class="group-box">
+          <!-- Calm Color Rationale Note -->
+          <div class="group-box-wrapper">
             <div class="group-box-header">
-              <div class="group-box-title">
-                <span>🎨</span>
-                <span data-i18n="color_rationale_title">色彩設計の理由（Semantic Color Architecture）</span>
-              </div>
+              <span class="group-box-label" data-i18n="color_rationale_title">配色の設計基準（WebTPDF Mac 準拠）</span>
             </div>
-            <div class="data-list">
-              <div class="data-row">
-                <div class="data-row-main">
-                  <span class="status-dot" style="background:var(--surface-lowest);border:1px solid var(--border-strong);width:14px;height:14px;"></span>
-                  <div class="data-row-info">
-                    <div class="data-row-title">Near-Black Surface Hierarchy (#08090a → #111214 → #1d1e20)</div>
-                    <div class="data-row-meta">理由: 装飾的なドロップシャドウを排し、明度差と 1px ボーダーのみでレイヤー階層（背景・カード・入力欄）を精密に分離するため。</div>
+            <div class="group-box">
+              <div class="data-list">
+                <div class="data-row">
+                  <div class="data-row-main">
+                    <span class="status-dot" style="background:var(--bg-elevated);border:1px solid var(--border-control);"></span>
+                    <div class="data-row-info">
+                      <div class="data-row-title">Neutral Dark Gray (画面の95%)</div>
+                      <div class="data-row-meta">背景・カード・入力欄はすべて落ち着いた無彩色グレーで統一し、視覚ノイズを排除しています。</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="data-row">
-                <div class="data-row-main">
-                  <span class="status-dot" style="background:var(--color-attention);width:14px;height:14px;"></span>
-                  <div class="data-row-info">
-                    <div class="data-row-title">Amber / Orange (#f59e0b) — 要入力・注意喚起 (Needs Input / Queued)</div>
-                    <div class="data-row-meta">理由: ユーザーの視線を「まだ入力が完了していない必須項目（① アプリ名・URL）」や「待機中キュー」へ迷わず誘導するため。</div>
+                <div class="data-row">
+                  <div class="data-row-main">
+                    <span class="status-dot orange"></span>
+                    <div class="data-row-info">
+                      <div class="data-row-title">Orange (#FF9F0A) — 未入力の必須ステップ / 要注意のみ</div>
+                      <div class="data-row-meta">トポロジーバーの「① 名前・URL」が未入力のとき、またはエラー発生時のみ点灯して入力箇所を示します。</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="data-row">
-                <div class="data-row-main">
-                  <span class="status-dot" style="background:var(--color-ready);width:14px;height:14px;"></span>
-                  <div class="data-row-info">
-                    <div class="data-row-title">Emerald Green (#10b981) — 検証完了・正常稼働 (Validated / Runtime Ready)</div>
-                    <div class="data-row-meta">理由: 入力値の検証通過（①〜③の準備完了）、ビルド成功、および Chromium / 署名ツールチェーンの健全性を即座に保証するため。</div>
+                <div class="data-row">
+                  <div class="data-row-main">
+                    <span class="status-dot green"></span>
+                    <div class="data-row-info">
+                      <div class="data-row-title">Green (#30D158) — 設定完了ステップ / ランタイム正常</div>
+                      <div class="data-row-meta">ステップ①〜③の準備完了（淡い8%背景）およびランタイム診断の正常インジケータにのみ使用します。</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="data-row">
-                <div class="data-row-main">
-                  <span class="status-dot" style="background:var(--color-action);width:14px;height:14px;"></span>
-                  <div class="data-row-info">
-                    <div class="data-row-title">Indigo Blue (#5e6ad2) — プライマリ実行アクション (Action Ready / Primary CTA)</div>
-                    <div class="data-row-meta">理由: 前提ステップ（①〜③）がすべて緑（Ready）になった瞬間にのみ ④ と作成ボタンを Indigo に点灯させ、「今すぐ実行できる操作」を一意に示すため。</div>
-                  </div>
-                </div>
-              </div>
-              <div class="data-row">
-                <div class="data-row-main">
-                  <span class="status-dot" style="background:var(--color-isolation);width:14px;height:14px;"></span>
-                  <div class="data-row-info">
-                    <div class="data-row-title">Isolation Purple (#a855f7) — セッション分離・Google OAuth 保護</div>
-                    <div class="data-row-meta">理由: 通常のステータス色（緑/橙/青）と混同させず、アプリ固有のサンドボックス領域（persist:bundleId）と認証保護機能を識別するため。</div>
-                  </div>
-                </div>
-              </div>
-              <div class="data-row">
-                <div class="data-row-main">
-                  <span class="status-dot" style="background:var(--color-danger);width:14px;height:14px;"></span>
-                  <div class="data-row-info">
-                    <div class="data-row-title">Crimson Red (#ef4444) — エラー・破壊的操作 (Failure / Trash)</div>
-                    <div class="data-row-meta">理由: ビルド失敗やアプリ削除（Trash）など、即時対処や注意を要する不可逆・異常状態のみに限定使用するため。</div>
+                <div class="data-row">
+                  <div class="data-row-main">
+                    <span class="status-dot blue"></span>
+                    <div class="data-row-info">
+                      <div class="data-row-title">System Blue (#0A84FF) — 実行アクション (④) / 選択中メニュー</div>
+                      <div class="data-row-meta">①〜③が揃って実行可能になった「④ アプリ保存」カードとプライマリボタン、選択中の左メニューにのみ使用します。</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1511,10 +1206,8 @@
         <section class="view-section" id="view-logs">
           <div class="page-header">
             <div>
-              <h1 class="page-title" data-i18n="logs_title">ビルド・実行ログ</h1>
-              <p class="page-subtitle" data-i18n="logs_subtitle">
-                パッケージャー（build_app.py / icon_processor.py）の標準出力とアイコン抽出の記録です。
-              </p>
+              <h1 class="page-title" data-i18n="logs_title">環境・実行ログ</h1>
+              <p class="page-subtitle" data-i18n="logs_subtitle">直近のビルド実行ログと出力先を確認します。</p>
             </div>
             <div class="btn-row">
               <button class="btn" onclick="copyConsoleLog()" data-i18n="btn_copy_log">ログをコピー</button>
@@ -1522,8 +1215,10 @@
             </div>
           </div>
 
-          <div class="group-box">
-            <div class="log-console tall" id="full-log-console">Ready.</div>
+          <div class="group-box-wrapper">
+            <div class="group-box" style="padding:10px;">
+              <div class="log-console tall" id="full-log-console">Ready.</div>
+            </div>
           </div>
         </section>
 
@@ -1532,7 +1227,6 @@
   </div>
 
   <script>
-    // State
     let uiLang = 'ja';
     let currentView = 'builder';
     let lastGeneratedAppPath = null;
@@ -1545,146 +1239,116 @@
 
     const I18N = {
       ja: {
-        nav_features: '機能 (Features)',
-        nav_builder: 'Web → App 作成',
+        nav_features: '機能',
         nav_dashboard: 'ダッシュボード',
-        nav_library: 'アプリライブラリ',
-        nav_system: 'システム (System)',
-        nav_runtime: '実行環境・色彩設計',
-        nav_logs: 'ビルドログ',
-        legend_title: '色彩設計 (Semantic Color):',
-        legend_amber: 'Amber = 要入力・待機中',
-        legend_emerald: 'Emerald = 準備完了・正常稼働',
-        legend_indigo: 'Indigo = 実行アクション可能',
-        legend_purple: 'Purple = セッション分離・OAuth保護',
-        legend_red: 'Red = エラー・削除',
-        builder_title: 'Web → Mac App 作成',
-        builder_subtitle: '①〜③のステップを入力すると、④のビルドカードが Indigo（実行可能）に点灯します。カード自体のクリックでも操作・切替が可能です。',
-        topo_1_title: '① アプリ名・URL',
-        topo_2_title: '② ウィンドウ・外観',
-        topo_3_title: '③ 分離・保存先',
-        topo_4_title: '④ アプリ生成 / キュー',
-        presets_title: 'クイックプリセット（Google OAuth / セッション分離対応）',
-        presets_hint: 'クリックで ① に即時反映',
-        form_section_title: 'アプリ構成設定',
-        label_app_name: '① アプリ表示名 (.app名)',
-        label_url: '① 開始 URL (https://...)',
-        label_icon: '② アイコン画像 (空欄で高解像度Webアイコン自動抽出)',
+        nav_builder: 'URL → App 作成',
+        nav_library: 'App ライブラリ',
+        nav_system: 'システム',
+        nav_runtime: '実行環境',
+        nav_logs: 'ログ',
+        topo_1_title: '① 名前・URL',
+        topo_2_title: '② ウィンドウ外観',
+        topo_3_title: '③ 保存先',
+        topo_4_title: '④ アプリ保存 / キュー',
+        box_settings: 'アプリ作成設定',
+        presets_caption: 'クイックプリセット（クリックで①に自動入力）',
+        label_app_name: '① アプリ表示名（.app 名）',
+        label_url: '① ソース URL（Webサービス）',
+        label_icon: '② アイコン画像（省略時はサイトから自動取得）',
         label_width: '② 初期幅 (px)',
         label_height: '② 初期高さ (px)',
-        label_bundle_id: '③ セッション分離 Bundle ID (空欄で自動生成)',
-        label_output_dir: '③ 出力先フォルダ',
-        btn_browse: '選択...',
-        btn_change_folder: '変更...',
+        label_bundle_id: '③ Bundle ID（省略時は自動生成・独立セッション領域）',
+        label_output_dir: '③ 保存先フォルダ',
+        btn_browse: '選択',
+        btn_change_folder: '変更',
         btn_reset_apps: '標準に戻す',
-        opt_install_title: '~/Applications に直接配置',
-        opt_install_desc: 'Spotlight / Launchpad から即座に起動可能',
-        opt_titlebar_title: '枠なしタイトルバー (Full View)',
-        opt_titlebar_desc: 'hiddenInset モダンベゼルレス外観',
-        opt_max_title: '起動時に最大化',
-        opt_max_desc: '初回起動時からワークスペースを広く表示',
-        btn_build_now: '④ 独立Macアプリ（.app）を作成',
-        btn_add_queue: '④ 実行キューに追加',
-        btn_launch_app: '▶ アプリを起動',
-        btn_reveal_finder: '📁 Finderで表示',
-        btn_run_queue: 'キューを連続ビルド',
+        opt_install: '~/Applications に直接インストール',
+        opt_titlebar: '枠なしタイトルバー (Full View)',
+        opt_maximized: '起動時にウィンドウを最大化',
+        btn_build_now: '④ URLからアプリ作成',
+        btn_add_queue: '④ ＋ キューに追加',
+        btn_open: '開く',
+        btn_run_queue: 'キューを連続実行',
         btn_clear_done: '完了済みを整理',
-        queue_empty: '複数のWebアプリをまとめて作る場合は「＋ 実行キューに追加」を押すと、順番に自動で .app 化できます。',
-        live_log_title: 'ビルド・パッケージング出力ログ',
-        btn_clear_log: 'ログをクリア',
-        btn_copy_log: 'ログをコピー',
-        dashboard_title: 'ダッシュボード',
-        dashboard_subtitle: '生成済みネイティブアプリ、Chromium 実行環境の健全性、および直近のビルド履歴を一覧監視します。',
-        btn_new_webapp: '＋ 新規Webアプリ作成',
-        btn_reload: '再読み込み',
-        metric_installed_title: 'インストール済み App',
-        metric_isolation_title: '分離プロファイル',
-        metric_isolation_detail: 'persist:bundleId 独立Cookie領域',
-        metric_runtime_title: 'ランタイム診断',
-        metric_history_title: '累計ビルド実行',
-        btn_view_runtime: '実行環境を確認',
-        btn_clear_history: '履歴を消去',
-        library_title: '生成済みアプリライブラリ (~/Applications)',
-        library_subtitle: 'WebTAPP Mac で作成された独立 macOS アプリの一覧です。その場で起動・設定再利用（再ビルド）・Finder表示・削除が行えます。',
-        runtime_title: '実行環境の診断 & 色彩設計（Color Rationale）',
-        runtime_subtitle: 'ネイティブアプリ生成に必要な macOS ツールチェーンの状態と、UI の各色が持つ機能的理由を確認します。',
-        btn_recheck: '再診断',
+        queue_empty: '名前とURLを入力して「＋ キューに追加」を押すと、順番に自動でアプリ化できます。',
+        box_log: 'ログ',
         btn_update_app: 'アップデート',
-        runtime_checks_box: 'ランタイムコンポーネント診断',
-        color_rationale_title: '色彩設計の理由（Semantic Color Architecture）',
-        logs_title: 'ビルド・実行ログ',
-        logs_subtitle: 'パッケージャー（build_app.py / icon_processor.py）の標準出力とアイコン抽出の記録です。'
+        metric_installed_title: '作成済みアプリ',
+        metric_runtime_title: '実行環境の準備',
+        metric_isolation_title: 'セッション分離',
+        metric_isolation_detail: 'アプリ別独立プロファイル',
+        metric_history_title: '作成履歴',
+        dash_runtime_box_title: '実行環境の準備状況',
+        btn_view_runtime: '実行環境を確認',
+        btn_clear_history: '履歴を全消去',
+        library_title: 'App ライブラリ',
+        library_subtitle: '~/Applications 内の作成済みアプリを開いたり、設定を読み込んで再作成したりできます。',
+        btn_reload: '再読み込み',
+        runtime_title: '実行環境の診断',
+        runtime_subtitle: 'Webアプリのパッケージングに必要なコンポーネントの状態を確認します。',
+        runtime_checks_box: 'ランタイム診断',
+        btn_recheck: '再診断',
+        color_rationale_title: '配色の設計基準（WebTPDF Mac 準拠）',
+        logs_title: '環境・実行ログ',
+        logs_subtitle: '直近のビルド実行ログと出力先を確認します。',
+        btn_copy_log: 'ログをコピー',
+        btn_clear_log: 'ログをクリア'
       },
       en: {
         nav_features: 'Features',
-        nav_builder: 'Web → App Builder',
         nav_dashboard: 'Dashboard',
+        nav_builder: 'URL → App',
         nav_library: 'App Library',
         nav_system: 'System',
-        nav_runtime: 'Runtime & Colors',
-        nav_logs: 'Build Logs',
-        legend_title: 'Semantic Color Rationale:',
-        legend_amber: 'Amber = Needs Input / Queued',
-        legend_emerald: 'Emerald = Validated / Ready',
-        legend_indigo: 'Indigo = Actionable CTA',
-        legend_purple: 'Purple = Isolated Profile / OAuth',
-        legend_red: 'Red = Error / Destructive',
-        builder_title: 'Web → Mac App Builder',
-        builder_subtitle: 'Complete steps ①–③ to light up step ④ in Indigo (Action Ready). Click any topology card to focus or toggle.',
-        topo_1_title: '① App Name & URL',
-        topo_2_title: '② Window & Style',
-        topo_3_title: '③ Isolation & Save',
-        topo_4_title: '④ Build / Queue',
-        presets_title: 'Quick Presets (Google OAuth & Session Isolation Ready)',
-        presets_hint: 'Click to populate Step ①',
-        form_section_title: 'Application Configuration',
-        label_app_name: '① Display Name (.app name)',
-        label_url: '① Target URL (https://...)',
-        label_icon: '② App Icon (Leave blank to auto-extract high-res web icon)',
+        nav_runtime: 'Runtime',
+        nav_logs: 'Logs',
+        topo_1_title: '① Name & URL',
+        topo_2_title: '② Window Style',
+        topo_3_title: '③ Save To',
+        topo_4_title: '④ Create / Queue',
+        box_settings: 'App Settings',
+        presets_caption: 'Quick Presets (Click to fill ①)',
+        label_app_name: '① Application Name (.app)',
+        label_url: '① Source URL',
+        label_icon: '② Icon Image (Auto-extracted if blank)',
         label_width: '② Width (px)',
         label_height: '② Height (px)',
-        label_bundle_id: '③ Isolated Bundle ID (Auto-generated if blank)',
-        label_output_dir: '③ Destination Folder',
-        btn_browse: 'Browse...',
-        btn_change_folder: 'Choose...',
+        label_bundle_id: '③ Bundle ID (Auto-generated isolated profile)',
+        label_output_dir: '③ Save Folder',
+        btn_browse: 'Choose',
+        btn_change_folder: 'Choose',
         btn_reset_apps: 'Reset',
-        opt_install_title: 'Install directly to ~/Applications',
-        opt_install_desc: 'Launch immediately from Spotlight or Launchpad',
-        opt_titlebar_title: 'Frameless Title Bar (Full View)',
-        opt_titlebar_desc: 'Modern hiddenInset borderless window',
-        opt_max_title: 'Start Maximized',
-        opt_max_desc: 'Expand window on initial launch',
-        btn_build_now: '④ Build Standalone Mac App (.app)',
+        opt_install: 'Install directly to ~/Applications',
+        opt_titlebar: 'Frameless title bar (Full View)',
+        opt_maximized: 'Start window maximized',
+        btn_build_now: '④ Create App from URL',
         btn_add_queue: '④ + Add to Queue',
-        btn_launch_app: '▶ Launch App',
-        btn_reveal_finder: '📁 Show in Finder',
+        btn_open: 'Open',
         btn_run_queue: 'Run Queue',
         btn_clear_done: 'Clear Finished',
-        queue_empty: 'Add multiple web apps with "+ Add to Queue" to build them sequentially.',
-        live_log_title: 'Live Packaging & Icon Log',
-        btn_clear_log: 'Clear Log',
-        btn_copy_log: 'Copy Log',
-        dashboard_title: 'Dashboard',
-        dashboard_subtitle: 'Monitor installed standalone apps, Chromium runtime health, and recent build history.',
-        btn_new_webapp: '+ New Web App',
-        btn_reload: 'Reload',
-        metric_installed_title: 'Installed Apps',
-        metric_isolation_title: 'Profile Isolation',
-        metric_isolation_detail: 'persist:bundleId sandboxed storage',
-        metric_runtime_title: 'Runtime Checks',
-        metric_history_title: 'Total Builds',
-        btn_view_runtime: 'View Runtime',
-        btn_clear_history: 'Clear History',
-        library_title: 'Generated App Library (~/Applications)',
-        library_subtitle: 'Manage standalone macOS apps built by WebTAPP Mac: launch, load settings to rebuild, reveal in Finder, or move to Trash.',
-        runtime_title: 'Runtime Diagnostics & Semantic Color Rationale',
-        runtime_subtitle: 'Inspect macOS packaging toolchain readiness and the functional meaning behind every UI color token.',
-        btn_recheck: 'Re-check',
+        queue_empty: 'Enter a name and URL, then click "+ Add to Queue" to build them sequentially.',
+        box_log: 'Log',
         btn_update_app: 'Update',
-        runtime_checks_box: 'Runtime Component Diagnostics',
-        color_rationale_title: 'Semantic Color Architecture Rationale',
-        logs_title: 'Build & Packaging Logs',
-        logs_subtitle: 'Standard output from build_app.py and icon_processor.py.'
+        metric_installed_title: 'Installed Apps',
+        metric_runtime_title: 'Runtime Status',
+        metric_isolation_title: 'Profile Isolation',
+        metric_isolation_detail: 'Isolated per-app storage',
+        metric_history_title: 'Build History',
+        dash_runtime_box_title: 'Runtime Environment',
+        btn_view_runtime: 'View Runtime',
+        btn_clear_history: 'Clear All History',
+        library_title: 'App Library',
+        library_subtitle: 'Open apps in ~/Applications or load their settings to rebuild.',
+        btn_reload: 'Reload',
+        runtime_title: 'Runtime Diagnostics',
+        runtime_subtitle: 'Verify the status of components required for native app packaging.',
+        runtime_checks_box: 'Runtime Checks',
+        btn_recheck: 'Re-check',
+        color_rationale_title: 'Color Rationale (WebTPDF Mac Standard)',
+        logs_title: 'Environment & Execution Logs',
+        logs_subtitle: 'Inspect recent packaging logs and output paths.',
+        btn_copy_log: 'Copy Log',
+        btn_clear_log: 'Clear Log'
       }
     };
 
@@ -1694,6 +1358,7 @@
 
     function toggleLanguage() {
       uiLang = uiLang === 'ja' ? 'en' : 'ja';
+      document.getElementById('lang-btn').textContent = uiLang === 'ja' ? '日本語' : 'English';
       document.querySelectorAll('[data-i18n]').forEach((el) => {
         const key = el.getAttribute('data-i18n');
         if (I18N[uiLang][key]) {
@@ -1726,18 +1391,18 @@
 
     function updateToolbarTitle() {
       const titles = {
-        builder: t('Web → Mac App 作成', 'Web → Mac App Builder'),
         dashboard: t('ダッシュボード', 'Dashboard'),
-        library: t('アプリライブラリ (~/Applications)', 'App Library (~/Applications)'),
-        runtime: t('実行環境・色彩設計', 'Runtime Diagnostics & Color Rationale'),
-        logs: t('ビルド・実行ログ', 'Build & Packaging Logs')
+        builder: t('URL → App 作成', 'URL to App'),
+        library: t('App ライブラリ', 'App Library'),
+        runtime: t('実行環境', 'Runtime'),
+        logs: t('ログ', 'Logs')
       };
       document.getElementById('toolbar-view-title').textContent = titles[currentView] || 'WebTAPP Mac';
     }
 
     function computeSlugBundleId(name) {
       const slug = (name || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-      return slug ? `com.webtoapp.${slug}` : 'com.webtoapp.customapp';
+      return slug ? `com.webtoapp.${slug}` : 'com.webtoapp.app';
     }
 
     function isValidWebUrl(val) {
@@ -1751,7 +1416,6 @@
       }
     }
 
-    // Interactive Topology Card Helpers (WebTPDF Mac UX pattern)
     function focusStep1() {
       const nameInput = document.getElementById('name');
       const urlInput = document.getElementById('url');
@@ -1768,12 +1432,6 @@
       updateFormState();
     }
 
-    function toggleStep3Install() {
-      const cb = document.getElementById('install');
-      cb.checked = !cb.checked;
-      onInstallToggleChange();
-    }
-
     function triggerBuildFromTopology() {
       const submitBtn = document.getElementById('submit-btn');
       if (!submitBtn.disabled && !isBuilding) {
@@ -1784,10 +1442,13 @@
     function onInstallToggleChange() {
       const installChecked = document.getElementById('install').checked;
       const outInput = document.getElementById('customOutputDir');
+      const resetBtn = document.getElementById('reset-dir-btn');
       if (installChecked) {
         outInput.value = '~/Applications';
+        resetBtn.style.display = 'none';
       } else if (outInput.value === '~/Applications') {
         outInput.value = './';
+        resetBtn.style.display = 'inline-flex';
       }
       updateFormState();
     }
@@ -1795,10 +1456,8 @@
     function updateFormState() {
       const nameVal = document.getElementById('name').value.trim();
       const urlVal = document.getElementById('url').value.trim();
-      const iconVal = document.getElementById('icon').value.trim();
       const widthVal = document.getElementById('width').value || '1200';
       const heightVal = document.getElementById('height').value || '800';
-      const bundleVal = document.getElementById('bundleId').value.trim();
       const hiddenTitlebar = document.getElementById('hiddenTitlebar').checked;
       const outDir = document.getElementById('customOutputDir').value.trim() || '~/Applications';
 
@@ -1806,53 +1465,27 @@
       const urlOk = isValidWebUrl(urlVal);
       const step1Ready = nameOk && urlOk;
 
-      // Highlight inputs with semantic borders
-      const nameInput = document.getElementById('name');
-      const urlInput = document.getElementById('url');
-      nameInput.className = nameOk ? 'input-valid' : 'input-needs-attention';
-      urlInput.className = `mono-input ${urlOk ? 'input-valid' : 'input-needs-attention'}`;
-
-      // Field status tags
-      const tagName = document.getElementById('tag-name-state');
-      tagName.className = `field-tag ${nameOk ? 'ready' : 'required'}`;
-      tagName.textContent = nameOk ? t('入力済', 'Ready') : t('要入力', 'Required');
-
-      const tagUrl = document.getElementById('tag-url-state');
-      tagUrl.className = `field-tag ${urlOk ? 'ready' : 'required'}`;
-      tagUrl.textContent = urlOk ? t('有効なURL', 'Valid URL') : t('要入力', 'Required');
-
-      const tagIcon = document.getElementById('tag-icon-state');
-      tagIcon.textContent = iconVal ? t('カスタム指定', 'Custom Icon') : t('自動抽出 Ready', 'Auto-Extract');
-
-      const effectiveBundle = bundleVal || computeSlugBundleId(nameVal);
-      document.getElementById('isolation-preview-tag').textContent = `persist:${effectiveBundle}`;
-
-      const tagOut = document.getElementById('tag-output-state');
-      tagOut.textContent = outDir;
-
-      // Topology Step 1 Card
+      // Step 1 Topology Card
       const topo1 = document.getElementById('topo-step-1');
       const topo1Detail = document.getElementById('topo-1-detail');
       if (step1Ready) {
         topo1.className = 'topology-card state-ready';
-        topo1Detail.textContent = `${nameVal}`;
+        topo1Detail.textContent = nameVal;
       } else {
         topo1.className = 'topology-card state-needs-input';
-        topo1Detail.textContent = !nameOk
-          ? t('アプリ名が未入力', 'Enter App Name')
-          : t('URLを入力してください', 'Enter valid URL');
+        topo1Detail.textContent = t('未入力', 'Empty');
       }
 
-      // Topology Step 2 Card
+      // Step 2 Topology Card
       const topo2Detail = document.getElementById('topo-2-detail');
-      const frameLabel = hiddenTitlebar ? t('Full View (枠なし)', 'Full View') : t('標準枠', 'Standard');
+      const frameLabel = hiddenTitlebar ? t('枠なし Full View', 'Frameless') : t('標準枠', 'Standard');
       topo2Detail.textContent = `${frameLabel} · ${widthVal}×${heightVal}`;
 
-      // Topology Step 3 Card
+      // Step 3 Topology Card
       const topo3Detail = document.getElementById('topo-3-detail');
-      topo3Detail.textContent = `${outDir.split('/').pop() || outDir} · ${effectiveBundle.replace('com.webtoapp.', '')}`;
+      topo3Detail.textContent = outDir.split('/').filter(Boolean).pop() || outDir;
 
-      // Topology Step 4 Card & Action Buttons
+      // Step 4 Topology Card
       const topo4 = document.getElementById('topo-step-4');
       const topo4Detail = document.getElementById('topo-4-detail');
       const submitBtn = document.getElementById('submit-btn');
@@ -1862,15 +1495,14 @@
       submitBtn.disabled = !canAct;
       enqueueBtn.disabled = !step1Ready;
 
-      if (isBuilding) {
+      if (step1Ready && !isBuilding) {
         topo4.className = 'topology-card state-action-ready';
-        topo4Detail.textContent = t('パッケージング実行中...', 'Packaging...');
-      } else if (step1Ready) {
-        topo4.className = 'topology-card state-action-ready';
-        topo4Detail.textContent = t('クリックで .app 生成開始', 'Click to Build .app');
+        topo4Detail.textContent = t('クリックで開始', 'Click to Start');
       } else {
         topo4.className = 'topology-card state-disabled';
-        topo4Detail.textContent = t('①を入力してください', 'Complete Step ①');
+        topo4Detail.textContent = isBuilding
+          ? t('作成中...', 'Building...')
+          : t('①〜③を設定してください', 'Complete ①–③');
       }
     }
 
@@ -1900,6 +1532,7 @@
         if (dirPath) {
           document.getElementById('install').checked = false;
           document.getElementById('customOutputDir').value = dirPath;
+          document.getElementById('reset-dir-btn').style.display = 'inline-flex';
           updateFormState();
         }
       }
@@ -1908,6 +1541,7 @@
     function resetOutputDir() {
       document.getElementById('install').checked = true;
       document.getElementById('customOutputDir').value = '~/Applications';
+      document.getElementById('reset-dir-btn').style.display = 'none';
       updateFormState();
     }
 
@@ -1932,23 +1566,20 @@
     }
 
     function appendLog(text) {
-      const builderConsole = document.getElementById('builder-log-console');
-      const fullConsole = document.getElementById('full-log-console');
-      if (builderConsole.textContent.startsWith('Ready.')) {
-        builderConsole.textContent = '';
-      }
-      if (fullConsole.textContent.startsWith('Ready.')) {
-        fullConsole.textContent = '';
-      }
-      builderConsole.textContent += text;
-      fullConsole.textContent += text;
-      builderConsole.scrollTop = builderConsole.scrollHeight;
-      fullConsole.scrollTop = fullConsole.scrollHeight;
+      ['builder-log-console', 'dash-log-console', 'full-log-console'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (el.textContent === 'Ready.') el.textContent = '';
+        el.textContent += text;
+        el.scrollTop = el.scrollHeight;
+      });
     }
 
     function clearConsoleLog() {
-      document.getElementById('builder-log-console').textContent = 'Ready.';
-      document.getElementById('full-log-console').textContent = 'Ready.';
+      ['builder-log-console', 'dash-log-console', 'full-log-console'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = 'Ready.';
+      });
     }
 
     function copyConsoleLog() {
@@ -1956,18 +1587,14 @@
       navigator.clipboard.writeText(text);
     }
 
-    function setToolbarBuildingState(building, labelText) {
-      const pill = document.getElementById('toolbar-runtime-pill');
-      const dot = document.getElementById('toolbar-status-dot');
-      const text = document.getElementById('toolbar-status-text');
-      if (building) {
-        pill.className = 'toolbar-status-pill running';
-        dot.className = 'status-dot indigo';
-        text.textContent = labelText || t('パッケージング実行中...', 'Packaging .app...');
+    function setToolbarOperation(active, labelText) {
+      const op = document.getElementById('toolbar-operation');
+      const txt = document.getElementById('toolbar-operation-text');
+      if (active) {
+        op.style.display = 'inline-flex';
+        txt.textContent = labelText || t('実行中', 'Running');
       } else {
-        pill.className = 'toolbar-status-pill';
-        dot.className = 'status-dot';
-        text.textContent = 'Chromium Engine Ready';
+        op.style.display = 'none';
       }
     }
 
@@ -1991,11 +1618,9 @@
       const params = collectFormParams();
       isBuilding = true;
       updateFormState();
-      setToolbarBuildingState(true, `${params.name}.app を生成中...`);
+      setToolbarOperation(true, t('作成中', 'Building'));
 
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.innerHTML = `<span class="spinner"></span> <span>${t('Chromium .app を構築中...', 'Building Chromium .app...')}</span>`;
-      appendLog(`\n=== [Build Started] ${params.name} (${params.url}) ===\n`);
+      appendLog(`\n[Build] ${params.name} (${params.url})\n`);
 
       try {
         const result = await executeSingleBuild(params);
@@ -2007,20 +1632,18 @@
             appendLog(result.log + '\n');
           }
         } else {
-          appendLog(`\n[ERROR] ${result?.error || 'Build failed'}\n`);
+          appendLog(`\n[Error] ${result?.error || 'Build failed'}\n`);
         }
       } catch (err) {
-        appendLog(`\n[ERROR] ${err.message}\n`);
+        appendLog(`\n[Error] ${err.message}\n`);
       } finally {
         isBuilding = false;
-        setToolbarBuildingState(false);
-        submitBtn.innerHTML = `<span>🚀</span> <span>${t('④ 独立Macアプリ（.app）を作成', '④ Build Standalone Mac App (.app)')}</span>`;
+        setToolbarOperation(false);
         updateFormState();
         await refreshAllData();
       }
     }
 
-    // Batch Execution Queue (WebTPDF Mac Pattern)
     function enqueueCurrentApp() {
       const params = collectFormParams();
       if (!params.name || !isValidWebUrl(params.url)) return;
@@ -2049,8 +1672,7 @@
 
     async function runQueue() {
       if (isBuilding) return;
-      const nextItem = appQueue.find((i) => i.status === 'pending');
-      if (!nextItem) return;
+      if (!appQueue.some((i) => i.status === 'pending')) return;
 
       isBuilding = true;
       updateFormState();
@@ -2060,8 +1682,8 @@
         if (!item) break;
         item.status = 'running';
         renderQueue();
-        setToolbarBuildingState(true, `Queue: ${item.params.name}.app`);
-        appendLog(`\n=== [Queue Build] ${item.params.name} (${item.params.url}) ===\n`);
+        setToolbarOperation(true, `${item.params.name}.app`);
+        appendLog(`\n[Queue] ${item.params.name} (${item.params.url})\n`);
 
         try {
           const res = await executeSingleBuild(item.params);
@@ -2083,7 +1705,7 @@
       }
 
       isBuilding = false;
-      setToolbarBuildingState(false);
+      setToolbarOperation(false);
       updateFormState();
       await refreshAllData();
     }
@@ -2092,67 +1714,51 @@
       const container = document.getElementById('queue-list-container');
       const titleEl = document.getElementById('queue-box-title');
       const badgeEl = document.getElementById('nav-queue-badge');
+      const controlsRow = document.getElementById('queue-controls-row');
       const runBtn = document.getElementById('run-queue-btn');
       const clearBtn = document.getElementById('clear-queue-btn');
 
       const pendingCount = appQueue.filter((i) => i.status === 'pending' || i.status === 'running').length;
-      titleEl.textContent = t(`バッチ実行キュー (${appQueue.length}件)`, `Batch Execution Queue (${appQueue.length})`);
-
-      if (pendingCount > 0) {
-        badgeEl.style.display = 'inline-block';
-        badgeEl.textContent = String(pendingCount);
-      } else {
-        badgeEl.style.display = 'none';
-      }
-
-      runBtn.disabled = isBuilding || !appQueue.some((i) => i.status === 'pending');
-      clearBtn.disabled = isBuilding || !appQueue.some((i) => i.status === 'completed' || i.status === 'failed');
+      titleEl.textContent = t(`実行キュー (${appQueue.length}件)`, `Execution Queue (${appQueue.length})`);
+      badgeEl.textContent = pendingCount > 0 ? String(pendingCount) : '';
 
       if (appQueue.length === 0) {
-        container.innerHTML = `<div class="empty-state">${t(
-          '複数のWebアプリをまとめて作る場合は「＋ 実行キューに追加」を押すと、順番に自動で .app 化できます。',
-          'Add multiple web apps with "+ Add to Queue" to build them sequentially.'
+        controlsRow.style.display = 'none';
+        container.innerHTML = `<div class="empty-caption">${t(
+          '名前とURLを入力して「＋ キューに追加」を押すと、順番に自動でアプリ化できます。',
+          'Enter a name and URL, then click "+ Add to Queue" to build them sequentially.'
         )}</div>`;
         return;
       }
 
+      controlsRow.style.display = 'flex';
+      runBtn.disabled = isBuilding || !appQueue.some((i) => i.status === 'pending');
+      clearBtn.disabled = isBuilding || !appQueue.some((i) => i.status === 'completed' || i.status === 'failed');
+
       container.innerHTML = appQueue.map((item) => {
-        let dotClass = 'amber';
-        let statusLabel = t('待機中', 'Queued');
-        if (item.status === 'running') {
-          dotClass = 'indigo';
-          statusLabel = t('ビルド中...', 'Building...');
-        } else if (item.status === 'completed') {
-          dotClass = '';
-          statusLabel = t('完了', 'Completed');
-        } else if (item.status === 'failed') {
-          dotClass = 'red';
-          statusLabel = t('失敗', 'Failed');
-        }
+        let dotClass = '';
+        if (item.status === 'running') dotClass = 'blue';
+        else if (item.status === 'completed') dotClass = 'green';
+        else if (item.status === 'failed') dotClass = 'orange';
 
         return `
           <div class="data-row">
             <div class="data-row-main">
               <span class="status-dot ${dotClass}"></span>
               <div class="data-row-info">
-                <div class="data-row-title">
-                  <span>${escapeHtml(item.params.name)}.app</span>
-                  <span class="field-tag ${item.status === 'completed' ? 'ready' : item.status === 'failed' ? 'required' : 'isolation'}">${statusLabel}</span>
-                </div>
-                <div class="data-row-meta">${escapeHtml(item.params.url)} ${item.error ? ' · ' + escapeHtml(item.error) : ''}</div>
+                <div class="data-row-title">${escapeHtml(item.params.name)}.app</div>
+                <div class="data-row-meta">${escapeHtml(item.params.url)}${item.error ? ' · ' + escapeHtml(item.error) : ''}</div>
               </div>
             </div>
             <div class="data-row-actions">
-              ${item.outputPath ? `<button class="btn btn-ready btn-sm" onclick="launchAppByPath('${escapeJs(item.outputPath)}')">${t('起動', 'Launch')}</button>` : ''}
-              ${item.outputPath ? `<button class="btn btn-sm" onclick="revealInFinder('${escapeJs(item.outputPath)}')">Finder</button>` : ''}
-              <button class="btn btn-sm" onclick="removeQueueItem('${item.id}')" ${item.status === 'running' ? 'disabled' : ''}>✕</button>
+              ${item.outputPath ? `<button class="btn btn-sm" onclick="launchAppByPath('${escapeJs(item.outputPath)}')">${t('開く', 'Open')}</button>` : ''}
+              <button class="btn btn-borderless btn-sm" onclick="removeQueueItem('${item.id}')" ${item.status === 'running' ? 'disabled' : ''}>🗑</button>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // Installed Apps Library & Dashboard Data
     async function refreshInstalledApps() {
       if (window.electronAPI && window.electronAPI.listInstalledApps) {
         installedApps = await window.electronAPI.listInstalledApps();
@@ -2192,49 +1798,39 @@
       document.getElementById('nav-library-badge').textContent = String(installedApps.length);
       document.getElementById('metric-installed-count').textContent = String(installedApps.length);
       const totalMB = installedApps.reduce((acc, a) => acc + (a.sizeMB || 0), 0).toFixed(1);
-      document.getElementById('metric-installed-detail').textContent = t(
-        `~/Applications 内 · 合計 ${totalMB} MB`,
-        `In ~/Applications · Total ${totalMB} MB`
-      );
+      document.getElementById('metric-installed-detail').textContent = `~/Applications · ${totalMB} MB`;
 
       document.getElementById('library-count-title').textContent = t(
-        `インストール済み WebTAPP アプリ (${installedApps.length}件)`,
-        `Installed WebTAPP Apps (${installedApps.length})`
+        `アプリ一覧 (${installedApps.length}件)`,
+        `Apps (${installedApps.length})`
       );
 
       const container = document.getElementById('library-list-container');
       if (installedApps.length === 0) {
-        container.innerHTML = `<div class="empty-state">${t(
-          '~/Applications に WebTAPP Mac で作成されたアプリはまだありません。「Web → App 作成」から作成してください。',
-          'No WebTAPP apps found in ~/Applications yet. Create one in Web → App Builder.'
+        container.innerHTML = `<div class="empty-caption">${t(
+          '~/Applications に作成されたアプリがありません。',
+          'No apps in ~/Applications.'
         )}</div>`;
         return;
       }
 
-      container.innerHTML = installedApps.map((appItem) => {
-        const frameTag = appItem.titleBarHidden ? 'Full View' : 'Standard';
-        return `
-          <div class="data-row">
-            <div class="data-row-main">
-              <span class="status-dot"></span>
-              <div class="data-row-info">
-                <div class="data-row-title">
-                  <span>${escapeHtml(appItem.name)}.app</span>
-                  <span class="field-tag isolation">persist:${escapeHtml(appItem.bundleId)}</span>
-                  <span class="field-tag ready">${frameTag} · ${appItem.width}×${appItem.height} · ${appItem.sizeMB} MB</span>
-                </div>
-                <div class="data-row-meta">${escapeHtml(appItem.url)} · ${escapeHtml(appItem.path)}</div>
-              </div>
-            </div>
-            <div class="data-row-actions">
-              <button class="btn btn-ready btn-sm" onclick="launchAppByPath('${escapeJs(appItem.path)}')">▶ ${t('起動', 'Launch')}</button>
-              <button class="btn btn-sm" onclick="loadAppIntoBuilder('${escapeJs(appItem.name)}', '${escapeJs(appItem.url)}', '${escapeJs(appItem.bundleId)}', ${appItem.width}, ${appItem.height}, ${appItem.titleBarHidden})">${t('設定を読込', 'Load Config')}</button>
-              <button class="btn btn-sm" onclick="revealInFinder('${escapeJs(appItem.path)}')">Finder</button>
-              <button class="btn btn-danger btn-sm" onclick="trashInstalledApp('${escapeJs(appItem.path)}', '${escapeJs(appItem.name)}')">🗑</button>
+      container.innerHTML = installedApps.map((appItem) => `
+        <div class="data-row">
+          <div class="data-row-main">
+            <span class="status-dot green"></span>
+            <div class="data-row-info">
+              <div class="data-row-title">${escapeHtml(appItem.name)}.app</div>
+              <div class="data-row-meta">${escapeHtml(appItem.url)} · ${escapeHtml(appItem.bundleId)} · ${appItem.sizeMB} MB</div>
             </div>
           </div>
-        `;
-      }).join('');
+          <div class="data-row-actions">
+            <button class="btn btn-sm" onclick="launchAppByPath('${escapeJs(appItem.path)}')">${t('開く', 'Open')}</button>
+            <button class="btn btn-sm" onclick="revealInFinder('${escapeJs(appItem.path)}')">Finder</button>
+            <button class="btn btn-primary btn-sm" onclick="loadAppIntoBuilder('${escapeJs(appItem.name)}', '${escapeJs(appItem.url)}', '${escapeJs(appItem.bundleId)}', ${appItem.width}, ${appItem.height}, ${appItem.titleBarHidden})">${t('設定を読込', 'Load Config')}</button>
+            <button class="btn btn-borderless btn-sm" onclick="trashInstalledApp('${escapeJs(appItem.path)}', '${escapeJs(appItem.name)}')">🗑</button>
+          </div>
+        </div>
+      `).join('');
     }
 
     function renderRuntimeAndDashboard() {
@@ -2243,18 +1839,18 @@
       const allOk = checks.length > 0 && okCount === checks.length;
 
       document.getElementById('metric-runtime-score').textContent = checks.length ? `${okCount} / ${checks.length}` : '5 / 5';
-      document.getElementById('metric-runtime-detail').textContent = allOk
-        ? t('すべてのパッケージング環境が正常', 'All packaging tools ready')
-        : t('要確認のコンポーネントがあります', 'Some components need attention');
+      document.getElementById('metric-runtime-detail').textContent = allOk ? t('すべて正常', 'All ready') : t('要確認あり', 'Needs check');
 
-      // Footer shield
       const shieldDot = document.getElementById('footer-shield-dot');
-      shieldDot.className = `status-dot ${allOk ? '' : 'amber'}`;
+      shieldDot.className = `status-dot ${allOk ? 'green' : 'orange'}`;
+      document.getElementById('footer-shield-text').textContent = allOk
+        ? t('Chromium 実行環境: 準備完了', 'Chromium Runtime: Ready')
+        : t('Chromium 実行環境: 要確認', 'Chromium Runtime: Check');
 
       if (runtimeStatus) {
         const verDisplay = runtimeStatus.versionDisplay || `v${runtimeStatus.version}`;
         document.getElementById('runtime-version-label').textContent =
-          `WebTAPP Mac ${verDisplay} · Chromium ${runtimeStatus.chromium || '-'} · ${runtimeStatus.platform || ''}`;
+          t(`現在バージョン: ${verDisplay}`, `Version: ${verDisplay}`);
 
         let checkedText = t('確認: 未確認', 'Checked: Never');
         if (runtimeStatus.lastUpdateCheckAt) {
@@ -2272,7 +1868,7 @@
           }
         }
 
-        ['toolbar', 'dash', 'runtime'].forEach((prefix) => {
+        ['dash', 'runtime'].forEach((prefix) => {
           const verEl = document.getElementById(`${prefix}-update-ver`);
           const chkEl = document.getElementById(`${prefix}-update-checked`);
           if (verEl) verEl.textContent = verDisplay;
@@ -2284,8 +1880,8 @@
           if (runtimeStatus.lastUpdatedFromVersion && runtimeStatus.lastUpdatedFromVersion !== verDisplay) {
             bannerEl.style.display = 'block';
             bannerEl.textContent = t(
-              `✓ 前回のアップデート: ${runtimeStatus.lastUpdatedFromVersion} → ${verDisplay}`,
-              `✓ Last update: ${runtimeStatus.lastUpdatedFromVersion} → ${verDisplay}`
+              `前回のアップデート: ${runtimeStatus.lastUpdatedFromVersion} → ${verDisplay}`,
+              `Last update: ${runtimeStatus.lastUpdatedFromVersion} → ${verDisplay}`
             );
           } else {
             bannerEl.style.display = 'none';
@@ -2296,61 +1892,46 @@
       const checksHtml = checks.map((c) => `
         <div class="data-row">
           <div class="data-row-main">
-            <span class="status-dot ${c.ok ? '' : 'amber'}"></span>
-            <div class="data-row-info">
-              <div class="data-row-title">${escapeHtml(c.name)}</div>
-              <div class="data-row-meta">${escapeHtml(c.detail)}</div>
-            </div>
+            <span class="status-dot ${c.ok ? 'green' : 'orange'}"></span>
+            <span class="data-row-title">${escapeHtml(c.name)}</span>
           </div>
-          <div class="data-row-actions">
-            <span class="field-tag ${c.ok ? 'ready' : 'required'}">${c.ok ? 'READY' : 'ATTENTION'}</span>
-          </div>
+          <span class="data-row-meta">${escapeHtml(c.detail)}</span>
         </div>
       `).join('');
 
-      document.getElementById('runtime-checks-list').innerHTML = checksHtml || '<div class="empty-state">No runtime check data.</div>';
+      document.getElementById('runtime-checks-list').innerHTML = checksHtml || '<div class="empty-caption">-</div>';
       document.getElementById('dash-runtime-list').innerHTML = checksHtml;
 
-      const dashIcon = document.getElementById('dash-runtime-icon');
-      const dashHead = document.getElementById('dash-runtime-headline');
-      dashIcon.style.color = allOk ? 'var(--color-ready)' : 'var(--color-attention)';
-      dashIcon.textContent = allOk ? '✓' : '⚠';
-      dashHead.textContent = allOk
-        ? t('必要な実行環境はすべて揃っています（Chromium / sips / iconutil / codesign）', 'All required runtime components are ready.')
-        : t('一部の実行環境に確認が必要です', 'Some runtime components require attention.');
+      document.getElementById('dash-runtime-dot').className = `status-dot ${allOk ? 'green' : 'orange'}`;
+      document.getElementById('dash-runtime-headline').textContent = allOk
+        ? t('必要な実行環境はすべて揃っています。', 'All required runtime tools are ready.')
+        : t('未整備の実行環境があります。', 'Some runtime tools need setup.');
 
-      // Build History
+      // History
       document.getElementById('metric-history-count').textContent = String(buildHistory.length);
       const failedCount = buildHistory.filter((h) => !h.succeeded).length;
-      document.getElementById('metric-history-detail').textContent = t(
-        `直近のエラー: ${failedCount}件`,
-        `Recent errors: ${failedCount}`
-      );
+      document.getElementById('metric-history-detail').textContent = t(`エラー: ${failedCount}件`, `Errors: ${failedCount}`);
       document.getElementById('dash-history-title').textContent = t(
-        `直近のビルド履歴 (${buildHistory.length}件)`,
-        `Recent Build History (${buildHistory.length})`
+        `作成履歴 (${buildHistory.length}件)`,
+        `Build History (${buildHistory.length})`
       );
 
       const histContainer = document.getElementById('dash-history-list');
       if (buildHistory.length === 0) {
-        histContainer.innerHTML = `<div class="empty-state">${t('まだビルド履歴はありません。', 'No build history yet.')}</div>`;
+        histContainer.innerHTML = `<div class="empty-caption">${t('まだ作成履歴はありません。', 'No build history yet.')}</div>`;
       } else {
-        histContainer.innerHTML = buildHistory.slice(0, 12).map((h) => `
+        histContainer.innerHTML = buildHistory.slice(0, 10).map((h) => `
           <div class="data-row">
             <div class="data-row-main">
-              <span class="status-dot ${h.succeeded ? '' : 'red'}"></span>
+              <span class="status-dot ${h.succeeded ? 'green' : 'orange'}"></span>
               <div class="data-row-info">
-                <div class="data-row-title">
-                  <span>${escapeHtml(h.name)}.app</span>
-                  <span class="field-tag ${h.succeeded ? 'ready' : 'required'}">${h.succeeded ? t('成功', 'Success') : t('失敗', 'Failed')}</span>
-                </div>
+                <div class="data-row-title">${escapeHtml(h.name)}.app</div>
                 <div class="data-row-meta">${escapeHtml(h.url)} · ${h.path ? escapeHtml(h.path) : escapeHtml(h.errorMessage || '')}</div>
               </div>
             </div>
             <div class="data-row-actions">
-              ${h.path ? `<button class="btn btn-ready btn-sm" onclick="launchAppByPath('${escapeJs(h.path)}')">${t('起動', 'Launch')}</button>` : ''}
-              ${h.path ? `<button class="btn btn-sm" onclick="revealInFinder('${escapeJs(h.path)}')">Finder</button>` : ''}
-              <button class="btn btn-sm" onclick="loadAppIntoBuilder('${escapeJs(h.name)}', '${escapeJs(h.url)}', '${escapeJs(h.bundleId || '')}', 1200, 800, ${Boolean(h.hiddenTitlebar)})">${t('再作成', 'Rebuild')}</button>
+              ${h.path ? `<button class="btn btn-sm" onclick="launchAppByPath('${escapeJs(h.path)}')">${t('開く', 'Open')}</button>` : ''}
+              <button class="btn ${h.succeeded ? '' : 'btn-warning'} btn-sm" onclick="loadAppIntoBuilder('${escapeJs(h.name)}', '${escapeJs(h.url)}', '${escapeJs(h.bundleId || '')}', 1200, 800, ${Boolean(h.hiddenTitlebar)})">${t('再作成', 'Rebuild')}</button>
             </div>
           </div>
         `).join('');
@@ -2387,21 +1968,15 @@
     }
 
     function launchLastBuiltApp() {
-      if (lastGeneratedAppPath) {
-        launchAppByPath(lastGeneratedAppPath);
-      }
+      if (lastGeneratedAppPath) launchAppByPath(lastGeneratedAppPath);
     }
 
     function openLastBuiltInFinder() {
-      if (lastGeneratedAppPath) {
-        revealInFinder(lastGeneratedAppPath);
-      }
+      if (lastGeneratedAppPath) revealInFinder(lastGeneratedAppPath);
     }
 
     async function trashInstalledApp(appPath, appName) {
-      if (!confirm(t(`「${appName}.app」をゴミ箱に移動しますか？`, `Move "${appName}.app" to Trash?`))) {
-        return;
-      }
+      if (!confirm(t(`「${appName}.app」をゴミ箱に移動しますか？`, `Move "${appName}.app" to Trash?`))) return;
       if (window.electronAPI && window.electronAPI.deleteApp) {
         await window.electronAPI.deleteApp(appPath);
         await refreshInstalledApps();
@@ -2418,7 +1993,7 @@
     async function triggerAppSelfUpdate() {
       if (isBuilding || isUpdatingApp) return;
       isUpdatingApp = true;
-      const updateBtns = ['toolbar-update-btn', 'dash-update-btn', 'runtime-update-btn']
+      const updateBtns = ['dash-update-btn', 'runtime-update-btn']
         .map((id) => document.getElementById(id))
         .filter(Boolean);
 
@@ -2426,7 +2001,7 @@
         btn.disabled = true;
         btn.innerHTML = `<span class="spinner"></span> <span>${t('更新中...', 'Updating...')}</span>`;
       });
-      setToolbarBuildingState(true, t('WebTAPP Mac をアップデート中...', 'Updating WebTAPP Mac...'));
+      setToolbarOperation(true, t('更新中', 'Updating'));
 
       try {
         let res;
@@ -2437,14 +2012,13 @@
           res = await r.json();
         }
         if (res && res.message) {
-          setToolbarBuildingState(false);
-          document.getElementById('toolbar-status-text').textContent = res.message;
+          appendLog(`\n[Update] ${res.message}\n`);
         }
       } catch (err) {
         appendLog(`\n[Update Error] ${err.message}\n`);
-        setToolbarBuildingState(false);
       } finally {
         isUpdatingApp = false;
+        setToolbarOperation(false);
         updateBtns.forEach((btn) => {
           btn.disabled = false;
           btn.innerHTML = `<span>↓</span> <span>${t('アップデート', 'Update')}</span>`;
@@ -2465,12 +2039,9 @@
       return String(str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     }
 
-    // Initialize
     window.addEventListener('DOMContentLoaded', () => {
       if (window.electronAPI && window.electronAPI.onBuildLog) {
-        window.electronAPI.onBuildLog((chunk) => {
-          appendLog(chunk);
-        });
+        window.electronAPI.onBuildLog((chunk) => appendLog(chunk));
       }
       updateFormState();
       renderQueue();
