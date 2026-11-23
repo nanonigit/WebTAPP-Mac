@@ -23,7 +23,7 @@ function createWindow() {
     height: 800,
     minWidth: 600,
     minHeight: 600,
-    title: "Web-to-App Studio",
+    title: "WebTAPP Mac",
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 14, y: 14 },
     webPreferences: {
@@ -50,7 +50,7 @@ function createWindow() {
 function setupMenu() {
   const template = [
     {
-      label: 'Web-to-App Studio',
+      label: 'WebTAPP Mac',
       submenu: [
         { role: 'about' },
         { type: 'separator' },

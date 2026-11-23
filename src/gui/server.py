@@ -68,7 +68,7 @@ class WebAppStudioHandler(BaseHTTPRequestHandler):
 def start_server(port=3123, open_browser=True):
     server = HTTPServer(("127.0.0.1", port), WebAppStudioHandler)
     url = f"http://127.0.0.1:{port}"
-    print(f"\n🚀 Web-to-App Studio running at {url}")
+    print(f"\n🚀 WebTAPP Mac running at {url}")
     print("Press Ctrl+C to stop.\n")
     if open_browser:
         webbrowser.open(url)

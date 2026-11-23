@@ -1,7 +1,7 @@
 {
-  "name": "web-to-app-runtime",
-  "version": "1.0.0",
-  "description": "Standalone Web Application Runtime powered by Chromium",
+  "name": "webtapp-mac-runtime",
+  "version": "1.0.2",
+  "description": "Standalone Web Application Runtime powered by Chromium (WebTAPP Mac)",
   "main": "main.js",
   "private": true
 }

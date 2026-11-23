@@ -1,7 +1,7 @@
 {
-  "name": "web-to-app",
-  "version": "1.0.0",
-  "description": "Google NotebookLMやFacebook Messenger、ChatGPT、Claude、NotionなどのWebサービスを、**わずか0.2MB〜数MBの超軽量・高速な独立macOSネイティブアプリ（`.app`）** に変換するツールです。",
+  "name": "webtapp-mac",
+  "version": "1.0.2",
+  "description": "Google NotebookLMやFacebook Messenger、ChatGPT、Claude、NotionなどのWebサービスを、**わずか0.2MB〜数MBの超軽量・高速な独立macOSネイティブアプリ（`.app`）** に変換するツール（WebTAPP Mac）です。",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

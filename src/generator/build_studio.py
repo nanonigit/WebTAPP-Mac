@@ -15,7 +15,7 @@ def build_studio_app(output_dir=None):
         output_dir = os.path.expanduser("~/Applications")
     
     os.makedirs(output_dir, exist_ok=True)
-    app_name = "Web-to-App Studio"
+    app_name = "WebTAPP Mac"
     app_bundle_path = os.path.join(output_dir, f"{app_name}.app")
     
     electron_base = BASE_DIR / "node_modules" / "electron" / "dist" / "Electron.app"
@@ -34,7 +34,7 @@ def build_studio_app(output_dir=None):
     resources_dir = os.path.join(contents_dir, "Resources")
 
     # Rename Executable
-    exec_name = "WebtoAppStudio"
+    exec_name = "WebTAPPMac"
     orig_exec = os.path.join(macos_dir, "Electron")
     dest_exec = os.path.join(macos_dir, exec_name)
     if os.path.exists(orig_exec):
@@ -69,7 +69,7 @@ def build_studio_app(output_dir=None):
 
     plist_data["CFBundleName"] = app_name
     plist_data["CFBundleDisplayName"] = app_name
-    plist_data["CFBundleIdentifier"] = "com.webtoapp.studio"
+    plist_data["CFBundleIdentifier"] = "com.webtapp.mac"
     plist_data["CFBundleExecutable"] = exec_name
     plist_data["CFBundleIconFile"] = "AppIcon.icns"
 

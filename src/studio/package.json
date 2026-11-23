@@ -1,7 +1,7 @@
 {
-  "name": "web-to-app-studio",
-  "version": "1.0.0",
-  "description": "Web-to-App Studio GUI Desktop Application",
+  "name": "webtapp-mac",
+  "version": "1.0.2",
+  "description": "WebTAPP Mac GUI Desktop Application",
   "main": "main.js",
   "private": true
 }

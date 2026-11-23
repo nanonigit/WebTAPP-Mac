@@ -1,4 +1,4 @@
-# Web-to-App Studio (Chromium Powered)
+# WebTAPP Mac (Chromium Powered)
 
 [English](README.md) | [日本語](README.ja.md)
 
@@ -20,7 +20,7 @@ Powered by an embedded Chromium runtime (Electron), providing 100% full compatib
   - Auto window state restoration
   - Camera, microphone, and notification permission support
   - Optional frameless / borderless modern title bar (Full View)
-- 📦 **Standalone Studio GUI + CLI**: Use either the sleek `Web-to-App Studio.app` GUI or the terminal CLI `web-to-app`.
+- 📦 **Standalone GUI + CLI**: Use either the sleek `WebTAPP Mac.app` GUI or the terminal CLI `webtapp-mac` (`web-to-app`).
 
 ---
 
@@ -29,21 +29,21 @@ Powered by an embedded Chromium runtime (Electron), providing 100% full compatib
 ### Via Homebrew Cask
 
 ```bash
-brew tap nanonigit/web-to-app
-brew install --cask web-to-app-studio
+brew tap nanonigit/WebTAPP-Mac
+brew install --cask webtapp-mac
 ```
 
 ### Manual Download
 
-Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigit/web-to-app/releases), open it, and move **Web-to-App Studio.app** to your `/Applications` or `~/Applications` folder.
+Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigit/WebTAPP-Mac/releases), open it, and move **WebTAPP Mac.app** to your `/Applications` or `~/Applications` folder.
 
 ---
 
 ## 🚀 Usage
 
-### 1. Using the GUI Studio (Recommended)
+### 1. Using the GUI (Recommended)
 
-1. Launch **Web-to-App Studio.app** from Spotlight (`Cmd + Space`) or Launchpad.
+1. Launch **WebTAPP Mac.app** from Spotlight (`Cmd + Space`) or Launchpad.
 2. Pick a quick preset (Google Notebook, Messenger, note, ChatGPT, Claude, Notion, etc.) or enter a custom URL.
 3. (Optional) Choose a custom icon image or let it auto-extract from the website.
 4. Click **"🚀 独立Macアプリ（.app）を作成"** (Build Standalone App).
@@ -55,13 +55,13 @@ Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigi
 
 ```bash
 # Create Google Notebook and install to ~/Applications
-./bin/web-to-app --name "Google Notebook" --url "https://notebooklm.google.com" --install
+./bin/webtapp-mac --name "Google Notebook" --url "https://notebooklm.google.com" --install
 
 # Create Messenger
-./bin/web-to-app --name "Messenger" --url "https://www.messenger.com" --install
+./bin/webtapp-mac --name "Messenger" --url "https://www.messenger.com" --install
 
 # Create custom app with custom icon and frameless window
-./bin/web-to-app --name "My App" --url "https://example.com" --icon ./icon.png --hidden-titlebar --install
+./bin/webtapp-mac --name "My App" --url "https://example.com" --icon ./icon.png --hidden-titlebar --install
 ```
 
 #### CLI Options:
@@ -81,11 +81,12 @@ Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigi
 ## 🛠️ Architecture
 
 ```text
-web-to-app/
+WebTAPP-Mac/
 ├── bin/
-│   └── web-to-app            # CLI executable
+│   ├── webtapp-mac           # CLI executable
+│   └── web-to-app            # CLI alias
 ├── src/
-│   ├── studio/               # Web-to-App Studio GUI Application
+│   ├── studio/               # WebTAPP Mac GUI Application
 │   │   ├── main.js
 │   │   ├── preload.js
 │   │   └── index.html
@@ -98,7 +99,7 @@ web-to-app/
 │       ├── build_studio.py
 │       └── icon_processor.py
 └── Casks/                    # Homebrew Cask Formula
-    └── web-to-app-studio.rb
+    └── webtapp-mac.rb
 ```
 
 ---

@@ -1,4 +1,4 @@
-# Web-to-App Studio (Chromium Powered)
+# WebTAPP Mac (Chromium Powered)
 
 [English](README.md) | [日本語](README.ja.md)
 
@@ -20,7 +20,7 @@ Chromiumランタイム（Electronベース）を内蔵しており、Googleの�
   - ウィンドウサイズ・位置の自動記憶
   - マイク・カメラ・通知パーミッション対応
   - モダンな枠なしタイトルバー（Full View）対応
-- 📦 **GUIスタジオ ＋ CLI両対応**: 直感的な `Web-to-App Studio.app` またはターミナルコマンド `web-to-app` を利用可能。
+- 📦 **GUI ＋ CLI両対応**: 直感的な `WebTAPP Mac.app` またはターミナルコマンド `webtapp-mac`（`web-to-app`）を利用可能。
 
 ---
 
@@ -29,21 +29,21 @@ Chromiumランタイム（Electronベース）を内蔵しており、Googleの�
 ### Homebrew Cask 経由（推奨）
 
 ```bash
-brew tap nanonigit/web-to-app
-brew install --cask web-to-app-studio
+brew tap nanonigit/WebTAPP-Mac
+brew install --cask webtapp-mac
 ```
 
 ### 手動ダウンロード
 
-[Releases](https://github.com/nanonigit/web-to-app/releases) から最新の `.dmg` または `.zip` をダウンロードし、展開した **Web-to-App Studio.app** を `/Applications` または `~/Applications` フォルダに移動してください。
+[Releases](https://github.com/nanonigit/WebTAPP-Mac/releases) から最新の `.dmg` または `.zip` をダウンロードし、展開した **WebTAPP Mac.app** を `/Applications` または `~/Applications` フォルダに移動してください。
 
 ---
 
 ## 🚀 使い方
 
-### 1. GUI スタジオで作成する（推奨）
+### 1. GUI で作成する（推奨）
 
-1. Spotlight（`Cmd + Space`）またはLaunchpadから **Web-to-App Studio.app** を起動します。
+1. Spotlight（`Cmd + Space`）またはLaunchpadから **WebTAPP Mac.app** を起動します。
 2. プリセット（Google Notebook, Messenger, note, ChatGPT, Claude, Notion等）を選択するか、任意のURLを入力します。
 3. （任意）「ファイル選択...」から好きなアイコン画像を指定するか、空欄にしてWebサイトから自動取得させます。
 4. **「🚀 独立Macアプリ（.app）を作成」** をクリックします。
@@ -55,13 +55,13 @@ brew install --cask web-to-app-studio
 
 ```bash
 # Google Notebook を作成して ~/Applications に配置
-./bin/web-to-app --name "Google Notebook" --url "https://notebooklm.google.com" --install
+./bin/webtapp-mac --name "Google Notebook" --url "https://notebooklm.google.com" --install
 
 # Messenger を作成
-./bin/web-to-app --name "Messenger" --url "https://www.messenger.com" --install
+./bin/webtapp-mac --name "Messenger" --url "https://www.messenger.com" --install
 
 # カスタムアイコンと枠なしウィンドウで作成
-./bin/web-to-app --name "My App" --url "https://example.com" --icon ./icon.png --hidden-titlebar --install
+./bin/webtapp-mac --name "My App" --url "https://example.com" --icon ./icon.png --hidden-titlebar --install
 ```
 
 #### CLI オプション一覧:
@@ -81,11 +81,12 @@ brew install --cask web-to-app-studio
 ## 🛠️ アーキテクチャ
 
 ```text
-web-to-app/
+WebTAPP-Mac/
 ├── bin/
-│   └── web-to-app            # CLI実行スクリプト
+│   ├── webtapp-mac           # CLI実行スクリプト
+│   └── web-to-app            # CLIエイリアス
 ├── src/
-│   ├── studio/               # Web-to-App Studio GUI アプリケーション本体
+│   ├── studio/               # WebTAPP Mac GUI アプリケーション本体
 │   │   ├── main.js
 │   │   ├── preload.js
 │   │   └── index.html
@@ -98,7 +99,7 @@ web-to-app/
 │       ├── build_studio.py
 │       └── icon_processor.py
 └── Casks/                    # Homebrew Cask 定義ファイル
-    └── web-to-app-studio.rb
+    └── webtapp-mac.rb
 ```
 
 ---
