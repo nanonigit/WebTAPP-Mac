@@ -93,7 +93,7 @@ def build_studio_app(output_dir=None):
     # Generate and copy Icon
     icon_source = str(BASE_DIR / "studio_icon.png")
     icon_dest = os.path.join(resources_dir, "AppIcon.icns")
-    convert_image_to_icns(icon_source, icon_dest, app_name)
+    convert_image_to_icns(icon_source, icon_dest, app_name, normalize_squircle=False)
     
     electron_icns = os.path.join(resources_dir, "electron.icns")
     if os.path.exists(icon_dest):

@@ -294,7 +294,145 @@ def create_pure_fallback_png(filename, name="App", width=512, height=512, custom
     with open(filename, "wb") as f:
         f.write(png_data)
 
-def convert_image_to_icns(source_image_path, output_icns_path, app_name="App"):
+def normalize_to_macos_squircle(master_png_path, size=1024):
+    """
+    Normalizes any favicon or uploaded image into a full-size native macOS squircle icon
+    (880x880 rounded-rect inside 1024x1024 canvas, matching official macOS apps).
+    Eliminates tiny centered badges and excessive padding in the macOS Dock.
+    """
+    try:
+        from PIL import Image, ImageChops, ImageDraw
+    except ImportError:
+        return False
+
+    try:
+        src = Image.open(master_png_path).convert("RGBA")
+        w, h = src.size
+        if w == 0 or h == 0:
+            return False
+
+        # 1. Inspect alpha channel to see if image is transparent/circular or full-bleed
+        alpha = src.getchannel("A")
+        alpha_extrema = alpha.getextrema()
+        has_transparency = alpha_extrema[0] < 240
+
+        # Sample corners and edge midpoints to detect uniform background color
+        corners = [
+            src.getpixel((0, 0)),
+            src.getpixel((w - 1, 0)),
+            src.getpixel((0, h - 1)),
+            src.getpixel((w - 1, h - 1)),
+        ]
+        opaque_corners = [c for c in corners if c[3] > 200]
+
+        def color_dist(c1, c2):
+            return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1]) + abs(c1[2] - c2[2])
+
+        # Determine squircle background fill color
+        bg_color = (255, 255, 255, 255)
+        is_uniform_opaque_bg = False
+
+        if len(opaque_corners) >= 3:
+            ref = opaque_corners[0]
+            if all(color_dist(ref, c) < 28 for c in opaque_corners):
+                bg_color = (ref[0], ref[1], ref[2], 255)
+                is_uniform_opaque_bg = True
+
+        # Check if it's a circular badge (transparent corners, opaque ring around center)
+        if not is_uniform_opaque_bg and has_transparency:
+            # Sample ring pixels at 15% inset from edges
+            ring_pts = [
+                src.getpixel((int(w * 0.5), int(h * 0.14))),
+                src.getpixel((int(w * 0.5), int(h * 0.86))),
+                src.getpixel((int(w * 0.14), int(h * 0.5))),
+                src.getpixel((int(w * 0.86), int(h * 0.5))),
+            ]
+            opaque_ring = [c for c in ring_pts if c[3] > 200]
+            if len(opaque_ring) >= 3:
+                ref = opaque_ring[0]
+                if all(color_dist(ref, c) < 28 for c in opaque_ring):
+                    bg_color = (ref[0], ref[1], ref[2], 255)
+                    is_uniform_opaque_bg = True
+
+        # 2. Find tight bounding box of the foreground logo
+        # First trim transparent outer margin
+        alpha_bbox = alpha.point(lambda p: 255 if p > 20 else 0).getbbox()
+        if alpha_bbox:
+            cropped = src.crop(alpha_bbox)
+        else:
+            cropped = src
+
+        cw, ch = cropped.size
+
+        # If we detected a uniform background color (e.g. white circle or white square),
+        # find the inner foreground logo bbox by diffing against bg_color
+        inner_cropped = cropped
+        if is_uniform_opaque_bg:
+            flat_bg = Image.new("RGBA", (cw, ch), bg_color)
+            # Composite cropped onto bg_color so transparent corners become bg_color
+            comp = Image.alpha_composite(flat_bg, cropped)
+            diff = ImageChops.difference(comp.convert("RGB"), flat_bg.convert("RGB"))
+            # Threshold subtle anti-aliasing noise
+            mask = diff.convert("L").point(lambda p: 255 if p > 22 else 0)
+            fg_bbox = mask.getbbox()
+            if fg_bbox:
+                fw = fg_bbox[2] - fg_bbox[0]
+                fh = fg_bbox[3] - fg_bbox[1]
+                # Only use inner foreground crop if it's meaningful (>15% of size)
+                if fw > cw * 0.15 and fh > ch * 0.15:
+                    inner_cropped = comp.crop(fg_bbox)
+
+        # 3. Render onto standard macOS squircle canvas (880x880 inside 1024x1024)
+        pad = 72
+        card_size = size - pad * 2  # 880
+        radius = 196
+
+        canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        squircle_mask = Image.new("L", (size, size), 0)
+        mask_draw = ImageDraw.Draw(squircle_mask)
+        mask_draw.rounded_rectangle([pad, pad, size - pad, size - pad], radius=radius, fill=255)
+
+        card = Image.new("RGBA", (size, size), bg_color)
+
+        iw, ih = inner_cropped.size
+        # Decide whether to full-bleed (for full-bleed photo/gradient icons) or upscale logo
+        is_full_bleed = (
+            not has_transparency
+            and not is_uniform_opaque_bg
+            and iw >= w * 0.85
+            and ih >= h * 0.85
+        )
+
+        if is_full_bleed:
+            resized = inner_cropped.resize((card_size, card_size), Image.Resampling.LANCZOS)
+            card.paste(resized, (pad, pad), resized)
+        else:
+            # Scale logo generously to fill ~74% of the squircle card (matches official ChatGPT.app)
+            target_box = int(card_size * 0.74)
+            scale = min(target_box / float(iw), target_box / float(ih))
+            new_w = max(1, int(round(iw * scale)))
+            new_h = max(1, int(round(ih * scale)))
+            resized = inner_cropped.resize((new_w, new_h), Image.Resampling.LANCZOS)
+            ox = (size - new_w) // 2
+            oy = (size - new_h) // 2
+            card.paste(resized, (ox, oy), resized)
+
+        # Apply macOS squircle mask & subtle border for crisp edge definition
+        final_img = Image.composite(card, canvas, squircle_mask)
+        border_draw = ImageDraw.Draw(final_img)
+        border_draw.rounded_rectangle(
+            [pad, pad, size - pad, size - pad],
+            radius=radius,
+            outline=(0, 0, 0, 28),
+            width=4
+        )
+        final_img.save(master_png_path, "PNG")
+        return True
+    except Exception:
+        return False
+
+
+def convert_image_to_icns(source_image_path, output_icns_path, app_name="App", normalize_squircle=True):
     if source_image_path and os.path.exists(source_image_path) and source_image_path.lower().endswith(".icns"):
         os.makedirs(os.path.dirname(os.path.abspath(output_icns_path)), exist_ok=True)
         shutil.copy2(source_image_path, output_icns_path)
@@ -310,6 +448,9 @@ def convert_image_to_icns(source_image_path, output_icns_path, app_name="App"):
 
         if not os.path.exists(master_png) or os.path.getsize(master_png) == 0:
             create_functional_category_png(master_png, "web")
+        elif normalize_squircle:
+            # Normalize fetched favicons / custom images to full-size macOS squircle
+            normalize_to_macos_squircle(master_png, size=1024)
 
         iconset_dir = os.path.join(temp_dir, "AppIcon.iconset")
         os.makedirs(iconset_dir, exist_ok=True)
@@ -364,7 +505,7 @@ def generate_icon_for_app(web_url, app_name, custom_icon_path, output_icns_path,
         try:
             preset_png = os.path.join(temp_dir, "preset.png")
             create_functional_category_png(preset_png, icon_preset)
-            return convert_image_to_icns(preset_png, output_icns_path, app_name)
+            return convert_image_to_icns(preset_png, output_icns_path, app_name, normalize_squircle=False)
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
 
