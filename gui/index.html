@@ -822,7 +822,7 @@
 
           <!-- WebTPDF Mac 4-Step Topology Bar (The ONLY place with step status colors) -->
           <div class="topology-container">
-            <div class="topology-card state-needs-input" id="topo-step-1" onclick="focusStep1()" title="クリックしてアプリ名とURL入力欄へ移動">
+            <div class="topology-card state-needs-input" id="topo-step-1" onclick="focusStep1()" data-i18n-title="topo_1_help" title="クリックしてアプリ名とURL入力欄へ移動">
               <div class="topology-icon">🌐</div>
               <div class="topology-title" data-i18n="topo_1_title">① 名前・URL</div>
               <div class="topology-detail" id="topo-1-detail">未入力</div>
@@ -830,7 +830,7 @@
 
             <div class="topology-chevron">›</div>
 
-            <div class="topology-card state-ready" id="topo-step-2" onclick="toggleStep2Titlebar()" title="クリックして標準枠 / 枠なし(Full View)を切り替え">
+            <div class="topology-card state-ready" id="topo-step-2" onclick="toggleStep2Titlebar()" data-i18n-title="topo_2_help" title="クリックして標準枠 / 枠なし(Full View)を切り替え">
               <div class="topology-icon">🪟</div>
               <div class="topology-title" data-i18n="topo_2_title">② ウィンドウ外観</div>
               <div class="topology-detail" id="topo-2-detail">標準枠 · 1200×800</div>
@@ -838,7 +838,7 @@
 
             <div class="topology-chevron">›</div>
 
-            <div class="topology-card state-ready" id="topo-step-3" onclick="chooseCustomOutputDir()" title="クリックして保存先フォルダを変更">
+            <div class="topology-card state-ready" id="topo-step-3" onclick="chooseCustomOutputDir()" data-i18n-title="topo_3_help" title="クリックして保存先フォルダを変更">
               <div class="topology-icon">📁</div>
               <div class="topology-title" data-i18n="topo_3_title">③ 保存先</div>
               <div class="topology-detail" id="topo-3-detail">Applications</div>
@@ -846,7 +846,7 @@
 
             <div class="topology-chevron">›</div>
 
-            <div class="topology-card state-disabled" id="topo-step-4" onclick="triggerBuildFromTopology()" title="クリックしてMacアプリ(.app)生成を実行">
+            <div class="topology-card state-disabled" id="topo-step-4" onclick="triggerBuildFromTopology()" data-i18n-title="topo_4_help" title="クリックしてMacアプリ(.app)生成を実行">
               <div class="topology-icon">⬇</div>
               <div class="topology-title" data-i18n="topo_4_title">④ アプリ保存 / キュー</div>
               <div class="topology-detail" id="topo-4-detail">①〜③を設定してください</div>
@@ -914,7 +914,7 @@
                   <div class="field-group">
                     <label class="field-caption" for="icon" data-i18n="label_icon">② アイコン画像（省略時はサイトから自動取得）</label>
                     <div class="inline-row">
-                      <input type="text" id="icon" class="mono-input" placeholder="空欄で自動抽出" oninput="updateFormState()">
+                      <input type="text" id="icon" class="mono-input" data-i18n-placeholder="ph_icon" placeholder="空欄で自動抽出" oninput="updateFormState()">
                       <button type="button" class="btn" onclick="browseIcon()" data-i18n="btn_browse">選択</button>
                     </div>
                   </div>
@@ -1038,7 +1038,7 @@
             </div>
             <div class="summary-card">
               <div class="summary-label" data-i18n="metric_isolation_title">セッション分離</div>
-              <div class="summary-value">有効</div>
+              <div class="summary-value" data-i18n="metric_isolation_value">有効</div>
               <div class="summary-detail" data-i18n="metric_isolation_detail">アプリ別独立プロファイル</div>
             </div>
             <div class="summary-card">
@@ -1163,8 +1163,8 @@
                   <div class="data-row-main">
                     <span class="status-dot" style="background:var(--bg-elevated);border:1px solid var(--border-control);"></span>
                     <div class="data-row-info">
-                      <div class="data-row-title">Neutral Dark Gray (画面の95%)</div>
-                      <div class="data-row-meta">背景・カード・入力欄はすべて落ち着いた無彩色グレーで統一し、視覚ノイズを排除しています。</div>
+                      <div class="data-row-title" data-i18n="cr_neutral_title">Neutral Dark Gray (画面の95%)</div>
+                      <div class="data-row-meta" data-i18n="cr_neutral_desc">背景・カード・入力欄はすべて落ち着いた無彩色グレーで統一し、視覚ノイズを排除しています。</div>
                     </div>
                   </div>
                 </div>
@@ -1172,8 +1172,8 @@
                   <div class="data-row-main">
                     <span class="status-dot orange"></span>
                     <div class="data-row-info">
-                      <div class="data-row-title">Orange (#FF9F0A) — 未入力の必須ステップ / 要注意のみ</div>
-                      <div class="data-row-meta">トポロジーバーの「① 名前・URL」が未入力のとき、またはエラー発生時のみ点灯して入力箇所を示します。</div>
+                      <div class="data-row-title" data-i18n="cr_orange_title">Orange (#FF9F0A) — 未入力の必須ステップ / 要注意のみ</div>
+                      <div class="data-row-meta" data-i18n="cr_orange_desc">トポロジーバーの「① 名前・URL」が未入力のとき、またはエラー発生時のみ点灯して入力箇所を示します。</div>
                     </div>
                   </div>
                 </div>
@@ -1181,8 +1181,8 @@
                   <div class="data-row-main">
                     <span class="status-dot green"></span>
                     <div class="data-row-info">
-                      <div class="data-row-title">Green (#30D158) — 設定完了ステップ / ランタイム正常</div>
-                      <div class="data-row-meta">ステップ①〜③の準備完了（淡い8%背景）およびランタイム診断の正常インジケータにのみ使用します。</div>
+                      <div class="data-row-title" data-i18n="cr_green_title">Green (#30D158) — 設定完了ステップ / ランタイム正常</div>
+                      <div class="data-row-meta" data-i18n="cr_green_desc">ステップ①〜③の準備完了（淡い8%背景）およびランタイム診断の正常インジケータにのみ使用します。</div>
                     </div>
                   </div>
                 </div>
@@ -1190,8 +1190,8 @@
                   <div class="data-row-main">
                     <span class="status-dot blue"></span>
                     <div class="data-row-info">
-                      <div class="data-row-title">System Blue (#0A84FF) — 実行アクション (④) / 選択中メニュー</div>
-                      <div class="data-row-meta">①〜③が揃って実行可能になった「④ アプリ保存」カードとプライマリボタン、選択中の左メニューにのみ使用します。</div>
+                      <div class="data-row-title" data-i18n="cr_blue_title">System Blue (#0A84FF) — 実行アクション (④) / 選択中メニュー</div>
+                      <div class="data-row-meta" data-i18n="cr_blue_desc">①〜③が揃って実行可能になった「④ アプリ保存」カードとプライマリボタン、選択中の左メニューにのみ使用します。</div>
                     </div>
                   </div>
                 </div>
@@ -1250,6 +1250,11 @@
         topo_2_title: '② ウィンドウ外観',
         topo_3_title: '③ 保存先',
         topo_4_title: '④ アプリ保存 / キュー',
+        topo_1_help: 'クリックしてアプリ名とURL入力欄へ移動',
+        topo_2_help: 'クリックして標準枠 / 枠なし(Full View)を切り替え',
+        topo_3_help: 'クリックして保存先フォルダを変更',
+        topo_4_help: 'クリックしてMacアプリ(.app)生成を実行',
+        ph_icon: '空欄で自動抽出',
         box_settings: 'アプリ作成設定',
         presets_caption: 'クイックプリセット（クリックで①に自動入力）',
         label_app_name: '① アプリ表示名（.app 名）',
@@ -1276,6 +1281,7 @@
         metric_installed_title: '作成済みアプリ',
         metric_runtime_title: '実行環境の準備',
         metric_isolation_title: 'セッション分離',
+        metric_isolation_value: '有効',
         metric_isolation_detail: 'アプリ別独立プロファイル',
         metric_history_title: '作成履歴',
         dash_runtime_box_title: '実行環境の準備状況',
@@ -1289,6 +1295,14 @@
         runtime_checks_box: 'ランタイム診断',
         btn_recheck: '再診断',
         color_rationale_title: '配色の設計基準（WebTPDF Mac 準拠）',
+        cr_neutral_title: 'Neutral Dark Gray (画面の95%)',
+        cr_neutral_desc: '背景・カード・入力欄はすべて落ち着いた無彩色グレーで統一し、視覚ノイズを排除しています。',
+        cr_orange_title: 'Orange (#FF9F0A) — 未入力の必須ステップ / 要注意のみ',
+        cr_orange_desc: 'トポロジーバーの「① 名前・URL」が未入力のとき、またはエラー発生時のみ点灯して入力箇所を示します。',
+        cr_green_title: 'Green (#30D158) — 設定完了ステップ / ランタイム正常',
+        cr_green_desc: 'ステップ①〜③の準備完了（淡い8%背景）およびランタイム診断の正常インジケータにのみ使用します。',
+        cr_blue_title: 'System Blue (#0A84FF) — 実行アクション (④) / 選択中メニュー',
+        cr_blue_desc: '①〜③が揃って実行可能になった「④ アプリ保存」カードとプライマリボタン、選択中の左メニューにのみ使用します。',
         logs_title: '環境・実行ログ',
         logs_subtitle: '直近のビルド実行ログと出力先を確認します。',
         btn_copy_log: 'ログをコピー',
@@ -1306,6 +1320,11 @@
         topo_2_title: '② Window Style',
         topo_3_title: '③ Save To',
         topo_4_title: '④ Create / Queue',
+        topo_1_help: 'Click to focus App Name and URL input',
+        topo_2_help: 'Click to toggle Standard / Frameless Full View',
+        topo_3_help: 'Click to choose output folder',
+        topo_4_help: 'Click to create standalone macOS .app',
+        ph_icon: 'Leave blank to auto-extract',
         box_settings: 'App Settings',
         presets_caption: 'Quick Presets (Click to fill ①)',
         label_app_name: '① Application Name (.app)',
@@ -1332,6 +1351,7 @@
         metric_installed_title: 'Installed Apps',
         metric_runtime_title: 'Runtime Status',
         metric_isolation_title: 'Profile Isolation',
+        metric_isolation_value: 'Enabled',
         metric_isolation_detail: 'Isolated per-app storage',
         metric_history_title: 'Build History',
         dash_runtime_box_title: 'Runtime Environment',
@@ -1345,6 +1365,14 @@
         runtime_checks_box: 'Runtime Checks',
         btn_recheck: 'Re-check',
         color_rationale_title: 'Color Rationale (WebTPDF Mac Standard)',
+        cr_neutral_title: 'Neutral Dark Gray (95% of UI)',
+        cr_neutral_desc: 'All backgrounds, GroupBoxes, and form controls use calm neutral dark grays to eliminate visual clutter.',
+        cr_orange_title: 'Orange (#FF9F0A) — Missing Required Input / Warning Only',
+        cr_orange_desc: 'Used strictly when Step ① (Name & URL) is empty or when a build/runtime item requires attention.',
+        cr_green_title: 'Green (#30D158) — Validated Step / Healthy Runtime',
+        cr_green_desc: 'Used strictly for completed steps ①–③ (subtle 8% fill) and healthy runtime status dots.',
+        cr_blue_title: 'System Blue (#0A84FF) — Primary Action (Step ④) / Active Nav',
+        cr_blue_desc: 'Used strictly for the actionable Step ④ card once ①–③ are complete, primary CTA buttons, and active sidebar selection.',
         logs_title: 'Environment & Execution Logs',
         logs_subtitle: 'Inspect recent packaging logs and output paths.',
         btn_copy_log: 'Copy Log',
@@ -1363,6 +1391,18 @@
         const key = el.getAttribute('data-i18n');
         if (I18N[uiLang][key]) {
           el.textContent = I18N[uiLang][key];
+        }
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (I18N[uiLang][key]) {
+          el.setAttribute('placeholder', I18N[uiLang][key]);
+        }
+      });
+      document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+        const key = el.getAttribute('data-i18n-title');
+        if (I18N[uiLang][key]) {
+          el.setAttribute('title', I18N[uiLang][key]);
         }
       });
       updateToolbarTitle();
