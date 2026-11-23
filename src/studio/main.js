@@ -775,7 +775,12 @@ ipcMain.handle('build-app', async (event, params) => {
           succeeded: true,
           errorMessage: null
         });
-        resolve({ success: true, path: appPath, bundleId, log: output });
+        if (appPath && fs.existsSync(appPath)) {
+          shell.openPath(appPath).catch((err) => {
+            console.error('Failed to auto-launch generated app:', err);
+          });
+        }
+        resolve({ success: true, path: appPath, bundleId, log: output, launched: true });
       } else {
         const errMsg = (errorOutput || output || `Process exited with code ${code}`).trim();
         appendHistoryItem({

@@ -120,8 +120,10 @@ class WebAppStudioHandler(BaseHTTPRequestHandler):
                     title_bar_hidden=hidden_titlebar,
                     install_to_apps=install
                 )
+                if app_path and os.path.exists(app_path):
+                    subprocess.run(["/usr/bin/open", app_path], check=False)
 
-                response = {"success": True, "path": app_path, "log": f"Built {app_path}"}
+                response = {"success": True, "path": app_path, "log": f"Built and launched {app_path}", "launched": True}
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.end_headers()

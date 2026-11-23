@@ -1916,7 +1916,10 @@
         if (result && result.success) {
           lastGeneratedAppPath = result.path;
           document.getElementById('last-built-actions').style.display = 'flex';
-          document.getElementById('last-built-label').textContent = `✓ ${params.name}.app`;
+          document.getElementById('last-built-label').textContent = t(
+            `✓ ${params.name}.app を作成・起動しました`,
+            `✓ Built & launched ${params.name}.app`
+          );
           if (!window.electronAPI && result.log) {
             appendLog(result.log + '\n');
           }
@@ -1981,7 +1984,10 @@
             item.outputPath = res.path;
             lastGeneratedAppPath = res.path;
             document.getElementById('last-built-actions').style.display = 'flex';
-            document.getElementById('last-built-label').textContent = `✓ ${item.params.name}.app`;
+            document.getElementById('last-built-label').textContent = t(
+              `✓ ${item.params.name}.app を作成・起動しました`,
+              `✓ Built & launched ${item.params.name}.app`
+            );
           } else {
             item.status = 'failed';
             item.error = res?.error || 'Failed';
