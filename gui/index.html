@@ -592,6 +592,52 @@
       flex-wrap: nowrap;
     }
 
+    /* Dashboard App Identity Banner (matching ReverseENGG Mac header card) */
+    .dash-app-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--bg-group);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+    }
+
+    .dash-app-banner-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .dash-app-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--text-primary);
+    }
+
+    .dash-app-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .engine-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 11px;
+      border-radius: 999px;
+      background: rgba(56, 139, 253, 0.14);
+      border: 1px solid rgba(56, 139, 253, 0.25);
+      color: #8ab4f8;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 500;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     .update-app-meta {
       display: flex;
       flex-direction: column;
@@ -1194,6 +1240,15 @@
              VIEW 2: DASHBOARD (WebTPDF Mac Dashboard layout)
              ================================================================== -->
         <section class="view-section active" id="view-dashboard">
+          <!-- App Identity Header Card -->
+          <div class="dash-app-banner">
+            <div class="dash-app-banner-left">
+              <div class="dash-app-title">WebTAPP Mac</div>
+              <div class="dash-app-subtitle" data-i18n="dash_app_subtitle">Webサービスを独立したmacOSネイティブアプリ（.app）に変換</div>
+            </div>
+            <span class="engine-pill" id="dash-engine-badge">Engine v1.1.26</span>
+          </div>
+
           <!-- Top Shortcut & Self-Update Row (Exact WebTPDF Mac dashboardView top bar) -->
           <div class="dash-top-bar">
             <div class="btn-row" style="flex-wrap:nowrap;">
@@ -1464,6 +1519,7 @@
         queue_empty: '名前とURLを入力して「＋ キューに追加」を押すと、順番に自動でアプリ化できます。',
         box_log: 'ログ',
         btn_update_app: 'アップデート',
+        dash_app_subtitle: 'Webサービスを独立したmacOSネイティブアプリ（.app）に変換',
         metric_installed_title: '作成済みアプリ',
         metric_runtime_title: '実行環境の準備',
         metric_isolation_title: 'セッション分離',
@@ -1554,6 +1610,7 @@
         queue_empty: 'Enter a name and URL, then click "+ Add to Queue" to build them sequentially.',
         box_log: 'Log',
         btn_update_app: 'Update',
+        dash_app_subtitle: 'Turn any web service into a standalone native macOS app (.app)',
         metric_installed_title: 'Installed Apps',
         metric_runtime_title: 'Runtime Status',
         metric_isolation_title: 'Profile Isolation',
@@ -2161,6 +2218,12 @@
 
       if (runtimeStatus) {
         const verDisplay = runtimeStatus.versionDisplay || `v${runtimeStatus.version}`;
+        const engineBadgeEl = document.getElementById('dash-engine-badge');
+        if (engineBadgeEl) {
+          engineBadgeEl.textContent = runtimeStatus.chromium
+            ? `Chromium ${runtimeStatus.chromium.split('.')[0]} · v${runtimeStatus.version}`
+            : `Engine v${runtimeStatus.version}`;
+        }
         document.getElementById('runtime-version-label').textContent =
           t(`現在バージョン: ${verDisplay}`, `Version: ${verDisplay}`);
 
