@@ -590,52 +590,35 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: nowrap;
+      padding: 2px 0;
     }
 
-    /* Dashboard App Identity Banner (matching ReverseENGG Mac header card) */
-    .dash-app-banner {
+    .dash-brand-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 18px;
-      background: var(--bg-group);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-    }
-
-    .dash-app-banner-left {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      gap: 10px;
       min-width: 0;
     }
 
-    .dash-app-title {
-      font-size: 18px;
+    .dash-brand-title {
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.2px;
+      letter-spacing: -0.3px;
       color: var(--text-primary);
+      white-space: nowrap;
     }
 
-    .dash-app-subtitle {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .engine-pill {
+    .version-capsule {
       display: inline-flex;
       align-items: center;
-      padding: 4px 11px;
+      padding: 3px 10px;
       border-radius: 999px;
-      background: rgba(56, 139, 253, 0.14);
-      border: 1px solid rgba(56, 139, 253, 0.25);
-      color: #8ab4f8;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
       font-family: var(--font-mono);
       font-size: 11.5px;
       font-weight: 500;
       white-space: nowrap;
-      flex-shrink: 0;
     }
 
     .update-app-meta {
@@ -1237,27 +1220,17 @@
         </section>
 
         <!-- ==================================================================
-             VIEW 2: DASHBOARD (WebTPDF Mac Dashboard layout)
+             VIEW 2: DASHBOARD (WebTPDF Mac Simple Top Bar)
              ================================================================== -->
         <section class="view-section active" id="view-dashboard">
-          <!-- App Identity Header Card -->
-          <div class="dash-app-banner">
-            <div class="dash-app-banner-left">
-              <div class="dash-app-title">WebTAPP Mac</div>
-              <div class="dash-app-subtitle" data-i18n="dash_app_subtitle">Webサービスを独立したmacOSネイティブアプリ（.app）に変換</div>
-            </div>
-            <span class="engine-pill" id="dash-engine-badge">Engine v1.1.26</span>
-          </div>
-
-          <!-- Top Shortcut & Self-Update Row (Exact WebTPDF Mac dashboardView top bar) -->
           <div class="dash-top-bar">
-            <div class="btn-row" style="flex-wrap:nowrap;">
-              <button class="btn btn-primary" onclick="switchView('builder')" data-i18n="nav_builder">URL → App 作成</button>
-              <button class="btn" onclick="switchView('library')" data-i18n="nav_library">App ライブラリ</button>
+            <div class="dash-brand-row">
+              <span class="dash-brand-title">WebTAPP Mac</span>
+              <span class="version-capsule" id="dash-version-capsule">v1.1.27</span>
             </div>
             <div class="update-app-widget">
               <div class="update-app-meta">
-                <span id="dash-update-ver">v1.1.24</span>
+                <span id="dash-update-ver">v1.1.27</span>
                 <span id="dash-update-checked">確認: 未確認</span>
               </div>
               <button class="btn" id="dash-update-btn" onclick="triggerAppSelfUpdate()">
@@ -2218,11 +2191,9 @@
 
       if (runtimeStatus) {
         const verDisplay = runtimeStatus.versionDisplay || `v${runtimeStatus.version}`;
-        const engineBadgeEl = document.getElementById('dash-engine-badge');
-        if (engineBadgeEl) {
-          engineBadgeEl.textContent = runtimeStatus.chromium
-            ? `Chromium ${runtimeStatus.chromium.split('.')[0]} · v${runtimeStatus.version}`
-            : `Engine v${runtimeStatus.version}`;
+        const capsuleEl = document.getElementById('dash-version-capsule');
+        if (capsuleEl) {
+          capsuleEl.textContent = verDisplay;
         }
         document.getElementById('runtime-version-label').textContent =
           t(`現在バージョン: ${verDisplay}`, `Version: ${verDisplay}`);
@@ -2232,6 +2203,7 @@
           try {
             const dt = new Date(runtimeStatus.lastUpdateCheckAt);
             const formatted = dt.toLocaleString(uiLang === 'ja' ? 'ja-JP' : 'en-US', {
+              year: 'numeric',
               month: 'numeric',
               day: 'numeric',
               hour: '2-digit',
