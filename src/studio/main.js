@@ -746,7 +746,8 @@ ipcMain.handle('build-app', async (event, params) => {
     }
 
     const startedAt = new Date().toISOString();
-    const pyProc = spawn('python3', args, {
+    const pythonBin = fs.existsSync('/usr/bin/python3') ? '/usr/bin/python3' : 'python3';
+    const pyProc = spawn(pythonBin, args, {
       cwd: path.dirname(pythonScript),
       env: process.env
     });

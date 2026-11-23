@@ -106,10 +106,27 @@ class IconHTMLParser(HTMLParser):
                 self.manifest_url = full_href
 
 def fetch_url_content(url, timeout=10):
+    ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+    # 1. Try native /usr/bin/curl first (uses macOS Keychain SSL & modern TLS)
+    curl_bin = "/usr/bin/curl" if os.path.exists("/usr/bin/curl") else shutil.which("curl")
+    if curl_bin:
+        try:
+            proc = subprocess.run(
+                [curl_bin, "-fsSL", "--max-time", str(timeout), "-A", ua, url],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                timeout=timeout + 2
+            )
+            if proc.returncode == 0 and proc.stdout:
+                return proc.stdout
+        except Exception:
+            pass
+
+    # 2. Fallback to urllib (with unverified SSL context if macOS Python lacks certifi)
     req = urllib.request.Request(
         url,
         headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+            "User-Agent": ua,
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
         }
     )
@@ -117,7 +134,13 @@ def fetch_url_content(url, timeout=10):
         with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.read()
     except Exception:
-        return None
+        try:
+            import ssl
+            ctx = ssl._create_unverified_context()
+            with urllib.request.urlopen(req, timeout=timeout, context=ctx) as response:
+                return response.read()
+        except Exception:
+            return None
 
 def download_image(url, output_path, timeout=10):
     content = fetch_url_content(url, timeout)
@@ -181,10 +204,10 @@ def get_best_icon_url(web_url):
 
     return candidate_urls
 
-def create_functional_category_png(filename, category_key="web", width=1024, height=1024):
+def create_functional_category_png(filename, category_key="web", width=1024, height=1024, app_name="App"):
     """
-    Renders a native macOS Big Sur/Sequoia squircle icon with an SF Symbol centered in white
-    using AppKit (falls back to pure Python gradient PNG if AppKit fails).
+    Renders a native macOS squircle icon with an SF Symbol (via AppKit) or
+    clean Pillow monogram fallback when AppKit is unavailable.
     """
     preset = FUNCTIONAL_ICON_PRESETS.get(category_key, FUNCTIONAL_ICON_PRESETS["web"])
     r1, g1, b1 = preset["color_top"]
@@ -241,6 +264,35 @@ def create_functional_category_png(filename, category_key="web", width=1024, hei
         png_data.writeToFile_atomically_(str(filename), True)
         if os.path.exists(filename) and os.path.getsize(filename) > 0:
             return True
+    except Exception:
+        pass
+
+    # Fallback using Pillow with clean monogram letter
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+        img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+        pad = int(width * 0.07)
+        radius = int(width * 0.19)
+        draw.rounded_rectangle([pad, pad, width - pad, height - pad], radius=radius, fill=(r1, g1, b1, 255))
+        glyph_map = {
+            "ai": "AI", "chat": "💬", "docs": "D", "media": "▶",
+            "dev": "</>", "analytics": "📊", "shop": "S", "web": (app_name[:1].upper() if app_name else "W")
+        }
+        glyph = glyph_map.get(category_key, app_name[:1].upper() if app_name else "W")
+        font = ImageFont.load_default()
+        for fp in ["/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/SFNS.ttf"]:
+            if os.path.exists(fp):
+                try:
+                    font = ImageFont.truetype(fp, size=int(width * 0.40))
+                    break
+                except Exception:
+                    pass
+        bbox = draw.textbbox((0, 0), glyph, font=font)
+        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        draw.text(((width - tw) / 2 - bbox[0], (height - th) / 2 - bbox[1]), glyph, font=font, fill=(255, 255, 255, 255))
+        img.save(filename, "PNG")
+        return True
     except Exception:
         pass
 
@@ -531,8 +583,8 @@ def generate_icon_for_app(web_url, app_name, custom_icon_path, output_icns_path,
 
         print(f"[*] Creating fallback functional icon for '{app_name}'...")
         fallback_png = os.path.join(temp_dir, "fallback.png")
-        create_functional_category_png(fallback_png, "web")
-        return convert_image_to_icns(fallback_png, output_icns_path, app_name)
+        create_functional_category_png(fallback_png, "web", app_name=app_name)
+        return convert_image_to_icns(fallback_png, output_icns_path, app_name, normalize_squircle=False)
     finally:
         shutil.rmtree(temp_dir, ignore_errors=True)
 
