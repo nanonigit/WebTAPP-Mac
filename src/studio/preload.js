@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getRuntimeStatus: () => ipcRenderer.invoke('get-runtime-status'),
   getBuildHistory: () => ipcRenderer.invoke('get-build-history'),
   clearBuildHistory: () => ipcRenderer.invoke('clear-build-history'),
-  updateApp: () => ipcRenderer.invoke('update-app'),
+  updateApp: (lang) => ipcRenderer.invoke('update-app', lang),
   onBuildLog: (callback) => {
     const listener = (_event, chunk) => callback(chunk);
     ipcRenderer.on('build-log', listener);

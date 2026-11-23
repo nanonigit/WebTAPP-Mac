@@ -566,7 +566,8 @@ ipcMain.handle('clear-build-history', async () => {
   return [];
 });
 
-ipcMain.handle('update-app', async () => {
+ipcMain.handle('update-app', async (_event, lang = 'ja') => {
+  const isEn = lang === 'en';
   return new Promise((resolve) => {
     const repoRoot = resolveRepoRoot();
     if (!repoRoot) {
@@ -574,7 +575,7 @@ ipcMain.handle('update-app', async () => {
         success: false,
         exitCode: 1,
         status: 'error',
-        message: 'WebTAPP-Mac リポジトリが見つかりませんでした。'
+        message: isEn ? 'WebTAPP-Mac repository not found.' : 'WebTAPP-Mac リポジトリが見つかりませんでした。'
       });
       return;
     }
@@ -589,7 +590,7 @@ ipcMain.handle('update-app', async () => {
         success: false,
         exitCode: 1,
         status: 'error',
-        message: 'update_mac_app.sh が見つかりませんでした。'
+        message: isEn ? 'update_mac_app.sh not found.' : 'update_mac_app.sh が見つかりませんでした。'
       });
       return;
     }
@@ -641,14 +642,19 @@ ipcMain.handle('update-app', async () => {
           lastUpdatedFromVersion: currentDisplay
         });
         if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('build-log', '\n[+] アップデート完了・再起動中...\n');
+          mainWindow.webContents.send(
+            'build-log',
+            isEn ? '\n[+] Update complete. Relaunching...\n' : '\n[+] アップデート完了・再起動中...\n'
+          );
         }
         resolve({
           success: true,
           exitCode: 0,
           status: 'updated',
           checkedAt,
-          message: `アップデート完了 (${currentDisplay} → 最新版)・再起動中...`
+          message: isEn
+            ? `Update complete (${currentDisplay} -> latest). Relaunching...`
+            : `アップデート完了 (${currentDisplay} → 最新版)・再起動中...`
         });
         setTimeout(() => {
           spawn('/bin/zsh', ['-c', 'sleep 1 && /usr/bin/open "$1"', 'webtapp-relaunch', installedApp], {
@@ -659,25 +665,35 @@ ipcMain.handle('update-app', async () => {
         }, 600);
       } else if (code === 10) {
         if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('build-log', `\n[✓] すでに最新版です (${currentDisplay})\n`);
+          mainWindow.webContents.send(
+            'build-log',
+            isEn ? `\n[✓] Already up to date (${currentDisplay})\n` : `\n[✓] すでに最新版です (${currentDisplay})\n`
+          );
         }
         resolve({
           success: true,
           exitCode: 10,
           status: 'up_to_date',
           checkedAt,
-          message: `すでに最新版です (${currentDisplay})`
+          message: isEn ? `Already up to date (${currentDisplay})` : `すでに最新版です (${currentDisplay})`
         });
       } else if (code === 11) {
         if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('build-log', `\n[i] 現在の修正を含む更新版はまだありません (${currentDisplay})\n`);
+          mainWindow.webContents.send(
+            'build-log',
+            isEn
+              ? `\n[i] No update containing the current build is available yet (${currentDisplay})\n`
+              : `\n[i] 現在の修正を含む更新版はまだありません (${currentDisplay})\n`
+          );
         }
         resolve({
           success: true,
           exitCode: 11,
           status: 'ahead_or_unverified',
           checkedAt,
-          message: '現在の修正を含む更新版はまだありません。'
+          message: isEn
+            ? 'No update containing the current build is available yet.'
+            : '現在の修正を含む更新版はまだありません。'
         });
       } else {
         const errMsg = (stderrText || stdoutText || `exit ${code}`).trim();
@@ -686,7 +702,7 @@ ipcMain.handle('update-app', async () => {
           exitCode: code,
           status: 'error',
           checkedAt,
-          message: `アップデートに失敗しました (exit ${code}): ${errMsg}`
+          message: isEn ? `Update failed (exit ${code}): ${errMsg}` : `アップデートに失敗しました (exit ${code}): ${errMsg}`
         });
       }
     });

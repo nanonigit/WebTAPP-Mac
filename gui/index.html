@@ -596,29 +596,35 @@
     .dash-brand-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
+      flex: 1;
+      overflow: hidden;
     }
 
     .dash-brand-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.3px;
       color: var(--text-primary);
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .version-capsule {
       display: inline-flex;
       align-items: center;
-      padding: 3px 10px;
+      padding: 2px 8px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
       color: var(--text-secondary);
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 500;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
     .update-app-meta {
@@ -2203,7 +2209,6 @@
           try {
             const dt = new Date(runtimeStatus.lastUpdateCheckAt);
             const formatted = dt.toLocaleString(uiLang === 'ja' ? 'ja-JP' : 'en-US', {
-              year: 'numeric',
               month: 'numeric',
               day: 'numeric',
               hour: '2-digit',
@@ -2349,7 +2354,7 @@
       try {
         let res;
         if (window.electronAPI && window.electronAPI.updateApp) {
-          res = await window.electronAPI.updateApp();
+          res = await window.electronAPI.updateApp(uiLang);
         } else {
           const r = await fetch('/api/update', { method: 'POST' });
           res = await r.json();
@@ -2364,7 +2369,7 @@
         setToolbarOperation(false);
         updateBtns.forEach((btn) => {
           btn.disabled = false;
-          btn.innerHTML = `<span>↓</span> <span>${t('アップデート', 'Update')}</span>`;
+          btn.innerHTML = `<span>↓</span> <span data-i18n="btn_update_app">${t('アップデート', 'Update')}</span>`;
         });
         await refreshRuntimeStatus();
       }
