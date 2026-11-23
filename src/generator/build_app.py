@@ -49,7 +49,7 @@ def build_application(
     output_dir="./",
     bundle_id=None,
     user_agent=None,
-    width=940,
+    width=780,
     height=923,
     min_width=400,
     min_height=300,
@@ -185,7 +185,7 @@ def main():
     parser.add_argument("--output", "-o", default="./", help="Directory where .app bundle will be saved")
     parser.add_argument("--bundle-id", "-b", default=None, help="Custom bundle identifier (e.g. 'com.company.myapp')")
     parser.add_argument("--user-agent", default=None, help="Custom User-Agent string")
-    parser.add_argument("--width", type=int, default=940, help="Initial window width (default: 940)")
+    parser.add_argument("--width", type=int, default=780, help="Initial window width (default: 780)")
     parser.add_argument("--height", type=int, default=923, help="Initial window height (default: 923)")
     parser.add_argument("--hidden-titlebar", action="store_true", help="Hide title bar for a modern borderless look")
     parser.add_argument("--maximized", action="store_true", help="Start window in maximized mode")

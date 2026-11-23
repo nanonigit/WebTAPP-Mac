@@ -33,7 +33,7 @@ def list_installed_webapps():
                     "name": cfg.get("name", entry.stem),
                     "url": cfg.get("url", ""),
                     "bundleId": cfg.get("bundleId", ""),
-                    "width": cfg.get("width", 940),
+                    "width": cfg.get("width", 780),
                     "height": cfg.get("height", 923),
                     "titleBarHidden": bool(cfg.get("titleBarHidden", False)),
                     "path": str(entry),
@@ -104,7 +104,7 @@ class WebAppStudioHandler(BaseHTTPRequestHandler):
                 icon = data.get("icon")
                 icon_preset = data.get("icon_preset")
                 bundle_id = data.get("bundle_id")
-                width = data.get("width", 940)
+                width = data.get("width", 780)
                 height = data.get("height", 923)
                 install = data.get("install", True)
                 hidden_titlebar = data.get("hidden_titlebar", False)

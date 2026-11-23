@@ -5,7 +5,7 @@ const { spawn, execSync } = require('child_process');
 
 let mainWindow = null;
 
-const DEFAULT_WINDOW_WIDTH = 940;
+const DEFAULT_WINDOW_WIDTH = 780;
 const DEFAULT_WINDOW_HEIGHT = 923;
 
 function getWindowStateFilePath() {
@@ -396,7 +396,7 @@ function createWindow() {
   const winOptions = {
     width: winState.width,
     height: winState.height,
-    minWidth: 780,
+    minWidth: 720,
     minHeight: 600,
     title: 'WebTAPP Mac',
     backgroundColor: '#1c1c1e',

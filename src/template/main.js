@@ -7,7 +7,7 @@ let config = {
   name: "Web App",
   url: "https://notebooklm.google.com",
   bundleId: "com.webtoapp.generic",
-  width: 940,
+  width: 780,
   height: 923,
   minWidth: 400,
   minHeight: 300,
@@ -40,7 +40,7 @@ function getWindowStatePath() {
 }
 
 function loadSavedWindowBounds() {
-  const defaultWidth = Number(config.width) || 940;
+  const defaultWidth = Number(config.width) || 780;
   const defaultHeight = Number(config.height) || 923;
   const fallback = { width: defaultWidth, height: defaultHeight, isMaximized: Boolean(config.startMaximized) };
   try {
