@@ -618,6 +618,9 @@ ipcMain.handle('build-app', async (event, params) => {
     if (params.icon) {
       args.push('--icon', params.icon);
     }
+    if (params.icon_preset) {
+      args.push('--icon-preset', params.icon_preset);
+    }
     if (params.bundle_id) {
       args.push('--bundle-id', params.bundle_id);
     }

@@ -102,6 +102,7 @@ class WebAppStudioHandler(BaseHTTPRequestHandler):
                 name = data.get("name")
                 url = data.get("url")
                 icon = data.get("icon")
+                icon_preset = data.get("icon_preset")
                 bundle_id = data.get("bundle_id")
                 width = data.get("width", 1200)
                 height = data.get("height", 800)
@@ -112,6 +113,7 @@ class WebAppStudioHandler(BaseHTTPRequestHandler):
                     name=name,
                     url=url,
                     icon=icon,
+                    icon_preset=icon_preset,
                     bundle_id=bundle_id,
                     width=width,
                     height=height,

@@ -583,41 +583,134 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Calm Summary Cards (Dashboard) */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+    /* Segmented Icon Mode Picker & Icon Selector Panels */
+    .segmented-picker {
+      display: inline-flex;
+      background: var(--bg-control);
+      border: 1px solid var(--border-control);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      gap: 2px;
     }
 
-    .summary-card {
-      background: var(--bg-group);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .summary-label {
-      font-size: 12px;
+    .seg-btn {
+      background: transparent;
+      border: none;
       color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
     }
 
-    .summary-value {
-      font-size: 20px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
+    .seg-btn:hover:not(.active) {
       color: var(--text-primary);
     }
 
-    .summary-detail {
-      font-size: 11px;
+    .seg-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    .icon-mode-panel {
+      background: var(--bg-control);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .icon-mode-panel.active {
+      display: flex;
+    }
+
+    .favicon-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .favicon-preview-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--bg-group);
+      border: 1px solid var(--border-control);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .favicon-preview-box img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .func-icons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .func-icon-btn {
+      background: var(--bg-group);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 9px 10px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .func-icon-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-control);
+    }
+
+    .func-icon-btn.selected {
+      border-color: var(--accent-blue);
+      background: var(--accent-blue-bg);
+    }
+
+    .func-icon-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .upload-spec-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      font-size: 11.5px;
       color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .upload-spec-box strong {
+      color: var(--text-primary);
+      font-weight: 600;
     }
 
     /* Lists & Dividers (WebTPDF GroupBox rows) */
@@ -910,20 +1003,91 @@
                   </div>
                 </div>
 
-                <div class="form-grid-3">
-                  <div class="field-group">
-                    <label class="field-caption" for="icon" data-i18n="label_icon">② アイコン画像（省略時はサイトから自動取得）</label>
-                    <div class="inline-row">
-                      <input type="text" id="icon" class="mono-input" data-i18n-placeholder="ph_icon" placeholder="空欄で自動抽出" oninput="updateFormState()">
-                      <button type="button" class="btn" onclick="browseIcon()" data-i18n="btn_browse">選択</button>
+                <!-- Step 2: App Icon Mode Selector (Favicon Default / Functional Icon / Custom Upload) -->
+                <div class="field-group">
+                  <div class="inline-row" style="justify-content:space-between;flex-wrap:wrap;">
+                    <label class="field-caption" data-i18n="label_icon_mode">② アプリアイコンの選択（基本：Webサイトのファビコン）</label>
+                    <div class="segmented-picker">
+                      <button type="button" class="seg-btn active" id="seg-icon-favicon" onclick="setIconMode('favicon')" data-i18n="icon_mode_favicon">🌐 サイトのファビコン (基本)</button>
+                      <button type="button" class="seg-btn" id="seg-icon-preset" onclick="setIconMode('preset')" data-i18n="icon_mode_preset">✨ 機能別アイコンから選ぶ</button>
+                      <button type="button" class="seg-btn" id="seg-icon-custom" onclick="setIconMode('custom')" data-i18n="icon_mode_custom">📁 自作アイコンをアップロード</button>
                     </div>
                   </div>
+
+                  <!-- Panel A: Favicon (Default) -->
+                  <div class="icon-mode-panel active" id="icon-panel-favicon">
+                    <div class="favicon-preview-row">
+                      <div class="favicon-preview-box" id="favicon-preview-box">
+                        <span style="font-size:18px;" id="favicon-fallback-glyph">🌐</span>
+                        <img id="favicon-preview-img" alt="Favicon" style="display:none;" onload="this.style.display='block';document.getElementById('favicon-fallback-glyph').style.display='none';" onerror="this.style.display='none';document.getElementById('favicon-fallback-glyph').style.display='block';">
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:2px;">
+                        <div style="font-size:12.5px;font-weight:500;color:var(--text-primary);" data-i18n="favicon_panel_title">入力されたURLからファビコン（Favicon / Apple Touch Icon）を自動取得します</div>
+                        <div style="font-size:11.5px;color:var(--text-secondary);" id="favicon-panel-domain" data-i18n="favicon_panel_desc">高解像度ファビコンを抽出し、macOS 標準の .icns アイコンへ自動変換します。</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Panel B: Functional Category Icons -->
+                  <div class="icon-mode-panel" id="icon-panel-preset">
+                    <div style="font-size:11.5px;color:var(--text-secondary);" data-i18n="preset_icon_hint">アプリの用途・機能に合った macOS ネイティブアイコン（1024×1024 .icns）を選択できます：</div>
+                    <div class="func-icons-grid">
+                      <button type="button" class="func-icon-btn selected" data-func-icon="ai" onclick="selectFunctionalIcon('ai', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#7c3aed,#4c1d95);">🧠</span>
+                        <span data-i18n="func_icon_ai">AI・アシスタント</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="chat" onclick="selectFunctionalIcon('chat', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#2563eb,#1d4ed8);">💬</span>
+                        <span data-i18n="func_icon_chat">チャット・通話</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="docs" onclick="selectFunctionalIcon('docs', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#10b981,#047857);">📄</span>
+                        <span data-i18n="func_icon_docs">ノート・文書</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="media" onclick="selectFunctionalIcon('media', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#ef4444,#b91c1c);">🎬</span>
+                        <span data-i18n="func_icon_media">音楽・動画</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="dev" onclick="selectFunctionalIcon('dev', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#374151,#111827);">⌘</span>
+                        <span data-i18n="func_icon_dev">開発・コード</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="analytics" onclick="selectFunctionalIcon('analytics', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#f59e0b,#b45309);">📊</span>
+                        <span data-i18n="func_icon_analytics">分析・管理画面</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="shop" onclick="selectFunctionalIcon('shop', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#ec4899,#be185d);">🛒</span>
+                        <span data-i18n="func_icon_shop">EC・ショップ</span>
+                      </button>
+                      <button type="button" class="func-icon-btn" data-func-icon="web" onclick="selectFunctionalIcon('web', this)">
+                        <span class="func-icon-swatch" style="background:linear-gradient(180deg,#0ea5e9,#0369a1);">🌐</span>
+                        <span data-i18n="func_icon_web">汎用Webツール</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Panel C: Custom Upload with explicit Size & Format specifications -->
+                  <div class="icon-mode-panel" id="icon-panel-custom">
+                    <div class="inline-row">
+                      <input type="text" id="icon" class="mono-input" data-i18n-placeholder="ph_icon" placeholder="画像ファイルを選択してください (/path/to/icon.png)" oninput="updateFormState()">
+                      <button type="button" class="btn btn-primary" onclick="browseIcon()" data-i18n="btn_upload_icon">画像を選択...</button>
+                    </div>
+                    <div class="upload-spec-box">
+                      <div><strong data-i18n="spec_format_label">対応ファイル形式:</strong> <span data-i18n="spec_format_val">PNG（推奨・透過対応）, JPEG (.jpg / .jpeg), WebP (.webp), ICO (.ico), macOS ICNS (.icns)</span></div>
+                      <div><strong data-i18n="spec_size_label">推奨サイズ・比率:</strong> <span data-i18n="spec_size_val">1024×1024 px または 512×512 px の正方形（1:1 / 最小 256×256 px 以上）。16px〜1024px の Retina 用マルチサイズ .icns に自動変換されます。</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 2: Window Dimensions -->
+                <div class="form-grid-2">
                   <div class="field-group">
-                    <label class="field-caption" for="width" data-i18n="label_width">② 初期幅 (px)</label>
+                    <label class="field-caption" for="width" data-i18n="label_width">② 初期ウィンドウ幅 (px)</label>
                     <input type="number" id="width" class="mono-input" value="1200" min="400" oninput="updateFormState()">
                   </div>
                   <div class="field-group">
-                    <label class="field-caption" for="height" data-i18n="label_height">② 初期高さ (px)</label>
+                    <label class="field-caption" for="height" data-i18n="label_height">② 初期ウィンドウ高さ (px)</label>
                     <input type="number" id="height" class="mono-input" value="800" min="300" oninput="updateFormState()">
                   </div>
                 </div>
@@ -1021,30 +1185,6 @@
                 <span>↓</span>
                 <span data-i18n="btn_update_app">アップデート</span>
               </button>
-            </div>
-          </div>
-
-          <!-- Calm Summary Metrics -->
-          <div class="summary-grid">
-            <div class="summary-card">
-              <div class="summary-label" data-i18n="metric_installed_title">作成済みアプリ</div>
-              <div class="summary-value" id="metric-installed-count">0</div>
-              <div class="summary-detail" id="metric-installed-detail">~/Applications</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label" data-i18n="metric_runtime_title">実行環境の準備</div>
-              <div class="summary-value" id="metric-runtime-score">5 / 5</div>
-              <div class="summary-detail" id="metric-runtime-detail">すべて正常</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label" data-i18n="metric_isolation_title">セッション分離</div>
-              <div class="summary-value" data-i18n="metric_isolation_value">有効</div>
-              <div class="summary-detail" data-i18n="metric_isolation_detail">アプリ別独立プロファイル</div>
-            </div>
-            <div class="summary-card">
-              <div class="summary-label" data-i18n="metric_history_title">作成履歴</div>
-              <div class="summary-value" id="metric-history-count">0</div>
-              <div class="summary-detail" id="metric-history-detail">エラー: 0件</div>
             </div>
           </div>
 
@@ -1232,6 +1372,8 @@
     let lastGeneratedAppPath = null;
     let isBuilding = false;
     let isUpdatingApp = false;
+    let iconMode = 'favicon'; // 'favicon' | 'preset' | 'custom'
+    let selectedIconPreset = 'ai';
     let appQueue = [];
     let installedApps = [];
     let buildHistory = [];
@@ -1259,9 +1401,29 @@
         presets_caption: 'クイックプリセット（クリックで①に自動入力）',
         label_app_name: '① アプリ表示名（.app 名）',
         label_url: '① ソース URL（Webサービス）',
-        label_icon: '② アイコン画像（省略時はサイトから自動取得）',
-        label_width: '② 初期幅 (px)',
-        label_height: '② 初期高さ (px)',
+        label_icon_mode: '② アプリアイコンの選択（基本：Webサイトのファビコン）',
+        icon_mode_favicon: '🌐 サイトのファビコン (基本)',
+        icon_mode_preset: '✨ 機能別アイコンから選ぶ',
+        icon_mode_custom: '📁 自作アイコンをアップロード',
+        favicon_panel_title: '入力されたURLからファビコン（Favicon / Apple Touch Icon）を自動取得します',
+        favicon_panel_desc: '高解像度ファビコンを抽出し、macOS 標準の .icns アイコンへ自動変換します。',
+        preset_icon_hint: 'アプリの用途・機能に合った macOS ネイティブアイコン（1024×1024 .icns）を選択できます：',
+        func_icon_ai: 'AI・アシスタント',
+        func_icon_chat: 'チャット・通話',
+        func_icon_docs: 'ノート・文書',
+        func_icon_media: '音楽・動画',
+        func_icon_dev: '開発・コード',
+        func_icon_analytics: '分析・管理画面',
+        func_icon_shop: 'EC・ショップ',
+        func_icon_web: '汎用Webツール',
+        ph_icon: '画像ファイルを選択してください (/path/to/icon.png)',
+        btn_upload_icon: '画像を選択...',
+        spec_format_label: '対応ファイル形式:',
+        spec_format_val: 'PNG（推奨・透過対応）, JPEG (.jpg / .jpeg), WebP (.webp), ICO (.ico), macOS ICNS (.icns)',
+        spec_size_label: '推奨サイズ・比率:',
+        spec_size_val: '1024×1024 px または 512×512 px の正方形（1:1 / 最小 256×256 px 以上）。16px〜1024px の Retina 用マルチサイズ .icns に自動変換されます。',
+        label_width: '② 初期ウィンドウ幅 (px)',
+        label_height: '② 初期ウィンドウ高さ (px)',
         label_bundle_id: '③ Bundle ID（省略時は自動生成・独立セッション領域）',
         label_output_dir: '③ 保存先フォルダ',
         btn_browse: '選択',
@@ -1329,9 +1491,29 @@
         presets_caption: 'Quick Presets (Click to fill ①)',
         label_app_name: '① Application Name (.app)',
         label_url: '① Source URL',
-        label_icon: '② Icon Image (Auto-extracted if blank)',
-        label_width: '② Width (px)',
-        label_height: '② Height (px)',
+        label_icon_mode: '② Application Icon (Default: Website Favicon)',
+        icon_mode_favicon: '🌐 Website Favicon (Default)',
+        icon_mode_preset: '✨ Functional App Icons',
+        icon_mode_custom: '📁 Upload Custom Icon',
+        favicon_panel_title: 'Automatically extracts the Favicon / Apple Touch Icon from the target URL',
+        favicon_panel_desc: 'Fetches the highest-resolution square favicon and compiles it into a native macOS .icns bundle.',
+        preset_icon_hint: 'Choose a native macOS icon (1024×1024 .icns) tailored to the application function:',
+        func_icon_ai: 'AI & Assistant',
+        func_icon_chat: 'Chat & Messaging',
+        func_icon_docs: 'Notes & Docs',
+        func_icon_media: 'Music & Video',
+        func_icon_dev: 'Developer & Code',
+        func_icon_analytics: 'Analytics & Admin',
+        func_icon_shop: 'Shopping & Store',
+        func_icon_web: 'General Web App',
+        ph_icon: 'Select an image file (/path/to/icon.png)',
+        btn_upload_icon: 'Choose Image...',
+        spec_format_label: 'Supported Formats:',
+        spec_format_val: 'PNG (Recommended, transparent background supported), JPEG (.jpg / .jpeg), WebP (.webp), ICO (.ico), macOS ICNS (.icns)',
+        spec_size_label: 'Recommended Size & Ratio:',
+        spec_size_val: '1024×1024 px or 512×512 px square (1:1 aspect ratio, minimum 256×256 px). Automatically compiled into multi-resolution Retina .icns (16px–1024px).',
+        label_width: '② Initial Width (px)',
+        label_height: '② Initial Height (px)',
         label_bundle_id: '③ Bundle ID (Auto-generated isolated profile)',
         label_output_dir: '③ Save Folder',
         btn_browse: 'Choose',
@@ -1493,9 +1675,55 @@
       updateFormState();
     }
 
+    function setIconMode(mode) {
+      iconMode = mode;
+      ['favicon', 'preset', 'custom'].forEach((m) => {
+        const btn = document.getElementById(`seg-icon-${m}`);
+        const panel = document.getElementById(`icon-panel-${m}`);
+        if (btn) btn.classList.toggle('active', m === mode);
+        if (panel) panel.classList.toggle('active', m === mode);
+      });
+      updateFormState();
+    }
+
+    function selectFunctionalIcon(presetKey, btnEl) {
+      selectedIconPreset = presetKey;
+      document.querySelectorAll('.func-icon-btn').forEach((b) => b.classList.remove('selected'));
+      if (btnEl) btnEl.classList.add('selected');
+      updateFormState();
+    }
+
+    function updateFaviconPreview(urlVal) {
+      const img = document.getElementById('favicon-preview-img');
+      const glyph = document.getElementById('favicon-fallback-glyph');
+      const desc = document.getElementById('favicon-panel-domain');
+      if (!isValidWebUrl(urlVal)) {
+        img.style.display = 'none';
+        glyph.style.display = 'block';
+        desc.textContent = t(
+          '高解像度ファビコンを抽出し、macOS 標準の .icns アイコンへ自動変換します。',
+          'Fetches the highest-resolution square favicon and compiles it into a native macOS .icns bundle.'
+        );
+        return;
+      }
+      try {
+        const withProto = /^https?:\/\//i.test(urlVal) ? urlVal : `https://${urlVal}`;
+        const host = new URL(withProto).hostname;
+        img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=128`;
+        desc.textContent = t(
+          `対象ドメイン: ${host} のファビコンを自動取得してアプリアイコンに設定します。`,
+          `Target domain: ${host} — Favicon will be extracted as the application icon.`
+        );
+      } catch {
+        img.style.display = 'none';
+        glyph.style.display = 'block';
+      }
+    }
+
     function updateFormState() {
       const nameVal = document.getElementById('name').value.trim();
       const urlVal = document.getElementById('url').value.trim();
+      const iconVal = document.getElementById('icon').value.trim();
       const widthVal = document.getElementById('width').value || '1200';
       const heightVal = document.getElementById('height').value || '800';
       const hiddenTitlebar = document.getElementById('hiddenTitlebar').checked;
@@ -1504,6 +1732,9 @@
       const nameOk = nameVal.length > 0;
       const urlOk = isValidWebUrl(urlVal);
       const step1Ready = nameOk && urlOk;
+      const customIconNeedFile = iconMode === 'custom' && !iconVal;
+
+      updateFaviconPreview(urlVal);
 
       // Step 1 Topology Card
       const topo1 = document.getElementById('topo-step-1');
@@ -1517,9 +1748,17 @@
       }
 
       // Step 2 Topology Card
+      const topo2 = document.getElementById('topo-step-2');
       const topo2Detail = document.getElementById('topo-2-detail');
-      const frameLabel = hiddenTitlebar ? t('枠なし Full View', 'Frameless') : t('標準枠', 'Standard');
-      topo2Detail.textContent = `${frameLabel} · ${widthVal}×${heightVal}`;
+      const frameLabel = hiddenTitlebar ? t('枠なし', 'Frameless') : t('標準枠', 'Standard');
+      let iconLabel = 'Favicon';
+      if (iconMode === 'preset') {
+        iconLabel = t(`機能アイコン(${selectedIconPreset})`, `Preset(${selectedIconPreset})`);
+      } else if (iconMode === 'custom') {
+        iconLabel = iconVal ? (iconVal.split('/').pop() || 'Custom') : t('画像未選択', 'No image');
+      }
+      topo2.className = customIconNeedFile ? 'topology-card state-needs-input' : 'topology-card state-ready';
+      topo2Detail.textContent = `${iconLabel} · ${frameLabel} · ${widthVal}×${heightVal}`;
 
       // Step 3 Topology Card
       const topo3Detail = document.getElementById('topo-3-detail');
@@ -1531,11 +1770,12 @@
       const submitBtn = document.getElementById('submit-btn');
       const enqueueBtn = document.getElementById('enqueue-btn');
 
-      const canAct = step1Ready && !isBuilding;
+      const allReady = step1Ready && !customIconNeedFile;
+      const canAct = allReady && !isBuilding;
       submitBtn.disabled = !canAct;
-      enqueueBtn.disabled = !step1Ready;
+      enqueueBtn.disabled = !allReady;
 
-      if (step1Ready && !isBuilding) {
+      if (allReady && !isBuilding) {
         topo4.className = 'topology-card state-action-ready';
         topo4Detail.textContent = t('クリックで開始', 'Click to Start');
       } else {
@@ -1591,11 +1831,20 @@
       const installChecked = document.getElementById('install').checked;
       const customOut = document.getElementById('customOutputDir').value.trim();
 
+      let customIconPath = null;
+      let iconPresetVal = null;
+      if (iconMode === 'custom') {
+        customIconPath = document.getElementById('icon').value.trim() || null;
+      } else if (iconMode === 'preset') {
+        iconPresetVal = selectedIconPreset;
+      }
+
       return {
         name: document.getElementById('name').value.trim(),
         url: normalizedUrl,
         bundle_id: document.getElementById('bundleId').value.trim() || null,
-        icon: document.getElementById('icon').value.trim() || null,
+        icon: customIconPath,
+        icon_preset: iconPresetVal,
         width: parseInt(document.getElementById('width').value, 10) || 1200,
         height: parseInt(document.getElementById('height').value, 10) || 800,
         install: installChecked,
@@ -1836,9 +2085,6 @@
 
     function renderInstalledApps() {
       document.getElementById('nav-library-badge').textContent = String(installedApps.length);
-      document.getElementById('metric-installed-count').textContent = String(installedApps.length);
-      const totalMB = installedApps.reduce((acc, a) => acc + (a.sizeMB || 0), 0).toFixed(1);
-      document.getElementById('metric-installed-detail').textContent = `~/Applications · ${totalMB} MB`;
 
       document.getElementById('library-count-title').textContent = t(
         `アプリ一覧 (${installedApps.length}件)`,
@@ -1877,9 +2123,6 @@
       const checks = runtimeStatus?.checks || [];
       const okCount = checks.filter((c) => c.ok).length;
       const allOk = checks.length > 0 && okCount === checks.length;
-
-      document.getElementById('metric-runtime-score').textContent = checks.length ? `${okCount} / ${checks.length}` : '5 / 5';
-      document.getElementById('metric-runtime-detail').textContent = allOk ? t('すべて正常', 'All ready') : t('要確認あり', 'Needs check');
 
       const shieldDot = document.getElementById('footer-shield-dot');
       shieldDot.className = `status-dot ${allOk ? 'green' : 'orange'}`;
@@ -1948,9 +2191,6 @@
         : t('未整備の実行環境があります。', 'Some runtime tools need setup.');
 
       // History
-      document.getElementById('metric-history-count').textContent = String(buildHistory.length);
-      const failedCount = buildHistory.filter((h) => !h.succeeded).length;
-      document.getElementById('metric-history-detail').textContent = t(`エラー: ${failedCount}件`, `Errors: ${failedCount}`);
       document.getElementById('dash-history-title').textContent = t(
         `作成履歴 (${buildHistory.length}件)`,
         `Build History (${buildHistory.length})`

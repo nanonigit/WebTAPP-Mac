@@ -45,6 +45,7 @@ def build_application(
     name,
     url,
     icon=None,
+    icon_preset=None,
     output_dir="./",
     bundle_id=None,
     user_agent=None,
@@ -130,7 +131,7 @@ def build_application(
     # 5. Generate and replace AppIcon.icns
     icon_dest = os.path.join(resources_dir, "AppIcon.icns")
     print(f"[*] Preparing application icon for '{clean_name}'...")
-    generate_icon_for_app(url, clean_name, icon, icon_dest)
+    generate_icon_for_app(url, clean_name, icon, icon_dest, icon_preset=icon_preset)
     
     # Also replace electron.icns
     electron_icns = os.path.join(resources_dir, "electron.icns")
@@ -180,6 +181,7 @@ def main():
     parser.add_argument("--name", "-n", required=True, help="Display Name of the App (e.g. 'Google NotebookLM')")
     parser.add_argument("--url", "-u", required=True, help="Starting URL of the Web App (e.g. 'https://notebooklm.google.com')")
     parser.add_argument("--icon", "-i", default=None, help="Path to custom image file for the app icon (PNG/JPEG/ICO/ICNS)")
+    parser.add_argument("--icon-preset", default=None, help="Functional category icon preset (ai, chat, docs, media, dev, analytics, shop, web)")
     parser.add_argument("--output", "-o", default="./", help="Directory where .app bundle will be saved")
     parser.add_argument("--bundle-id", "-b", default=None, help="Custom bundle identifier (e.g. 'com.company.myapp')")
     parser.add_argument("--user-agent", default=None, help="Custom User-Agent string")
@@ -198,6 +200,7 @@ def main():
             name=args.name,
             url=args.url,
             icon=args.icon,
+            icon_preset=args.icon_preset,
             output_dir=args.output,
             bundle_id=args.bundle_id,
             user_agent=args.user_agent,
