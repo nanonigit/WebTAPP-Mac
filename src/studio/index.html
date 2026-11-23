@@ -580,6 +580,16 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .dash-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: nowrap;
     }
 
     .update-app-meta {
@@ -1185,15 +1195,14 @@
              ================================================================== -->
         <section class="view-section active" id="view-dashboard">
           <!-- Top Shortcut & Self-Update Row (Exact WebTPDF Mac dashboardView top bar) -->
-          <div class="btn-row" style="justify-content:space-between;">
-            <div class="btn-row">
+          <div class="dash-top-bar">
+            <div class="btn-row" style="flex-wrap:nowrap;">
               <button class="btn btn-primary" onclick="switchView('builder')" data-i18n="nav_builder">URL → App 作成</button>
               <button class="btn" onclick="switchView('library')" data-i18n="nav_library">App ライブラリ</button>
-              <button class="btn" onclick="switchView('runtime')" data-i18n="nav_runtime">実行環境</button>
             </div>
             <div class="update-app-widget">
               <div class="update-app-meta">
-                <span id="dash-update-ver">v1.1.17</span>
+                <span id="dash-update-ver">v1.1.24</span>
                 <span id="dash-update-checked">確認: 未確認</span>
               </div>
               <button class="btn" id="dash-update-btn" onclick="triggerAppSelfUpdate()">
