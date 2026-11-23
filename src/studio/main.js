@@ -1,9 +1,73 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, Menu, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn, execSync } = require('child_process');
 
 let mainWindow = null;
+
+const DEFAULT_WINDOW_WIDTH = 940;
+const DEFAULT_WINDOW_HEIGHT = 923;
+
+function getWindowStateFilePath() {
+  const userDataDir = app.getPath('userData');
+  if (!fs.existsSync(userDataDir)) {
+    fs.mkdirSync(userDataDir, { recursive: true });
+  }
+  return path.join(userDataDir, 'window_state.json');
+}
+
+function loadWindowState() {
+  const fallback = {
+    width: DEFAULT_WINDOW_WIDTH,
+    height: DEFAULT_WINDOW_HEIGHT
+  };
+  try {
+    const file = getWindowStateFilePath();
+    if (!fs.existsSync(file)) return fallback;
+    const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const width = Number(saved.width) >= 640 ? Number(saved.width) : DEFAULT_WINDOW_WIDTH;
+    const height = Number(saved.height) >= 540 ? Number(saved.height) : DEFAULT_WINDOW_HEIGHT;
+    const state = { width, height, isMaximized: Boolean(saved.isMaximized) };
+
+    if (typeof saved.x === 'number' && typeof saved.y === 'number') {
+      const displays = screen.getAllDisplays();
+      const isVisibleOnAnyDisplay = displays.some((d) => {
+        const b = d.bounds;
+        return (
+          saved.x + width > b.x + 40 &&
+          saved.x < b.x + b.width - 40 &&
+          saved.y + height > b.y + 40 &&
+          saved.y < b.y + b.height - 40
+        );
+      });
+      if (isVisibleOnAnyDisplay) {
+        state.x = saved.x;
+        state.y = saved.y;
+      }
+    }
+    return state;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveWindowState(win) {
+  if (!win || win.isDestroyed()) return;
+  try {
+    const isMaximized = win.isMaximized();
+    const bounds = isMaximized && win.getNormalBounds ? win.getNormalBounds() : win.getBounds();
+    const data = {
+      x: bounds.x,
+      y: bounds.y,
+      width: bounds.width,
+      height: bounds.height,
+      isMaximized
+    };
+    fs.writeFileSync(getWindowStateFilePath(), JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Failed to save window state:', err);
+  }
+}
 
 function getBuildScriptPath() {
   const candidateInternal = path.join(__dirname, 'generator', 'build_app.py');
@@ -328,13 +392,14 @@ function checkRuntimeEnvironment() {
 }
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1120,
-    height: 780,
-    minWidth: 940,
-    minHeight: 640,
+  const winState = loadWindowState();
+  const winOptions = {
+    width: winState.width,
+    height: winState.height,
+    minWidth: 780,
+    minHeight: 600,
     title: 'WebTAPP Mac',
-    backgroundColor: '#08090a',
+    backgroundColor: '#1c1c1e',
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
@@ -343,12 +408,34 @@ function createWindow() {
       contextIsolation: true
     },
     show: false
-  });
+  };
+  if (typeof winState.x === 'number' && typeof winState.y === 'number') {
+    winOptions.x = winState.x;
+    winOptions.y = winState.y;
+  }
+
+  mainWindow = new BrowserWindow(winOptions);
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   mainWindow.once('ready-to-show', () => {
+    if (winState.isMaximized) {
+      mainWindow.maximize();
+    }
     mainWindow.show();
+  });
+
+  let saveTimer = null;
+  const scheduleSave = () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveWindowState(mainWindow), 150);
+  };
+
+  mainWindow.on('resize', scheduleSave);
+  mainWindow.on('move', scheduleSave);
+  mainWindow.on('close', () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveWindowState(mainWindow);
   });
 
   mainWindow.on('closed', () => {

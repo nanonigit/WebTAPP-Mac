@@ -49,8 +49,8 @@ def build_application(
     output_dir="./",
     bundle_id=None,
     user_agent=None,
-    width=1200,
-    height=800,
+    width=940,
+    height=923,
     min_width=400,
     min_height=300,
     title_bar_hidden=False,
@@ -185,8 +185,8 @@ def main():
     parser.add_argument("--output", "-o", default="./", help="Directory where .app bundle will be saved")
     parser.add_argument("--bundle-id", "-b", default=None, help="Custom bundle identifier (e.g. 'com.company.myapp')")
     parser.add_argument("--user-agent", default=None, help="Custom User-Agent string")
-    parser.add_argument("--width", type=int, default=1200, help="Initial window width (default: 1200)")
-    parser.add_argument("--height", type=int, default=800, help="Initial window height (default: 800)")
+    parser.add_argument("--width", type=int, default=940, help="Initial window width (default: 940)")
+    parser.add_argument("--height", type=int, default=923, help="Initial window height (default: 923)")
     parser.add_argument("--hidden-titlebar", action="store_true", help="Hide title bar for a modern borderless look")
     parser.add_argument("--maximized", action="store_true", help="Start window in maximized mode")
     parser.add_argument("--install", action="store_true", help="Install directly to ~/Applications")

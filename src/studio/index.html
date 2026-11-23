@@ -926,7 +926,7 @@
             <div class="topology-card state-ready" id="topo-step-2" onclick="toggleStep2Titlebar()" data-i18n-title="topo_2_help" title="クリックして標準枠 / 枠なし(Full View)を切り替え">
               <div class="topology-icon">🪟</div>
               <div class="topology-title" data-i18n="topo_2_title">② ウィンドウ外観</div>
-              <div class="topology-detail" id="topo-2-detail">標準枠 · 1200×800</div>
+              <div class="topology-detail" id="topo-2-detail">標準枠 · 940×923</div>
             </div>
 
             <div class="topology-chevron">›</div>
@@ -1084,11 +1084,11 @@
                 <div class="form-grid-2">
                   <div class="field-group">
                     <label class="field-caption" for="width" data-i18n="label_width">② 初期ウィンドウ幅 (px)</label>
-                    <input type="number" id="width" class="mono-input" value="1200" min="400" oninput="updateFormState()">
+                    <input type="number" id="width" class="mono-input" value="940" min="400" oninput="updateFormState()">
                   </div>
                   <div class="field-group">
                     <label class="field-caption" for="height" data-i18n="label_height">② 初期ウィンドウ高さ (px)</label>
-                    <input type="number" id="height" class="mono-input" value="800" min="300" oninput="updateFormState()">
+                    <input type="number" id="height" class="mono-input" value="923" min="300" oninput="updateFormState()">
                   </div>
                 </div>
 
@@ -1724,8 +1724,8 @@
       const nameVal = document.getElementById('name').value.trim();
       const urlVal = document.getElementById('url').value.trim();
       const iconVal = document.getElementById('icon').value.trim();
-      const widthVal = document.getElementById('width').value || '1200';
-      const heightVal = document.getElementById('height').value || '800';
+      const widthVal = document.getElementById('width').value || '940';
+      const heightVal = document.getElementById('height').value || '923';
       const hiddenTitlebar = document.getElementById('hiddenTitlebar').checked;
       const outDir = document.getElementById('customOutputDir').value.trim() || '~/Applications';
 
@@ -1845,8 +1845,8 @@
         bundle_id: document.getElementById('bundleId').value.trim() || null,
         icon: customIconPath,
         icon_preset: iconPresetVal,
-        width: parseInt(document.getElementById('width').value, 10) || 1200,
-        height: parseInt(document.getElementById('height').value, 10) || 800,
+        width: parseInt(document.getElementById('width').value, 10) || 940,
+        height: parseInt(document.getElementById('height').value, 10) || 923,
         install: installChecked,
         output_dir: installChecked ? null : (customOut || './'),
         hidden_titlebar: document.getElementById('hiddenTitlebar').checked,
@@ -2222,8 +2222,8 @@
       document.getElementById('name').value = name;
       document.getElementById('url').value = url;
       document.getElementById('bundleId').value = bundleId || computeSlugBundleId(name);
-      document.getElementById('width').value = width || 1200;
-      document.getElementById('height').value = height || 800;
+      document.getElementById('width').value = width || 940;
+      document.getElementById('height').value = height || 923;
       document.getElementById('hiddenTitlebar').checked = Boolean(hiddenTitlebar);
       switchView('builder');
       updateFormState();

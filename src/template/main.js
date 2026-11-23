@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, session, Menu } = require('electron');
+const { app, BrowserWindow, shell, session, Menu, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -7,8 +7,8 @@ let config = {
   name: "Web App",
   url: "https://notebooklm.google.com",
   bundleId: "com.webtoapp.generic",
-  width: 1200,
-  height: 800,
+  width: 940,
+  height: 923,
   minWidth: 400,
   minHeight: 300,
   titleBarHidden: false,
@@ -31,6 +31,62 @@ try {
 // 2. Set distinct UserData path for complete profile isolation
 const isolatedUserData = path.join(app.getPath('appData'), config.bundleId);
 app.setPath('userData', isolatedUserData);
+
+function getWindowStatePath() {
+  if (!fs.existsSync(isolatedUserData)) {
+    fs.mkdirSync(isolatedUserData, { recursive: true });
+  }
+  return path.join(isolatedUserData, 'window_state.json');
+}
+
+function loadSavedWindowBounds() {
+  const defaultWidth = Number(config.width) || 940;
+  const defaultHeight = Number(config.height) || 923;
+  const fallback = { width: defaultWidth, height: defaultHeight, isMaximized: Boolean(config.startMaximized) };
+  try {
+    const file = getWindowStatePath();
+    if (!fs.existsSync(file)) return fallback;
+    const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const width = Number(saved.width) >= (config.minWidth || 400) ? Number(saved.width) : defaultWidth;
+    const height = Number(saved.height) >= (config.minHeight || 300) ? Number(saved.height) : defaultHeight;
+    const state = { width, height, isMaximized: Boolean(saved.isMaximized) };
+
+    if (typeof saved.x === 'number' && typeof saved.y === 'number') {
+      const displays = screen.getAllDisplays();
+      const visible = displays.some((d) => {
+        const b = d.bounds;
+        return (
+          saved.x + width > b.x + 40 &&
+          saved.x < b.x + b.width - 40 &&
+          saved.y + height > b.y + 40 &&
+          saved.y < b.y + b.height - 40
+        );
+      });
+      if (visible) {
+        state.x = saved.x;
+        state.y = saved.y;
+      }
+    }
+    return state;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveWindowBounds(win) {
+  if (!win || win.isDestroyed()) return;
+  try {
+    const isMaximized = win.isMaximized();
+    const bounds = isMaximized && win.getNormalBounds ? win.getNormalBounds() : win.getBounds();
+    fs.writeFileSync(
+      getWindowStatePath(),
+      JSON.stringify({ x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height, isMaximized }, null, 2),
+      'utf8'
+    );
+  } catch {
+    // Ignore write failure
+  }
+}
 
 let mainWindow = null;
 let isQuitting = false;
@@ -128,9 +184,10 @@ function createWindow() {
     callback(allowed.includes(permission));
   });
 
-  mainWindow = new BrowserWindow({
-    width: config.width || 1200,
-    height: config.height || 800,
+  const savedBounds = loadSavedWindowBounds();
+  const winOpts = {
+    width: savedBounds.width,
+    height: savedBounds.height,
     minWidth: config.minWidth || 400,
     minHeight: config.minHeight || 300,
     title: config.name,
@@ -144,7 +201,21 @@ function createWindow() {
       spellcheck: true,
       preload: path.join(__dirname, 'preload.js')
     }
-  });
+  };
+  if (typeof savedBounds.x === 'number' && typeof savedBounds.y === 'number') {
+    winOpts.x = savedBounds.x;
+    winOpts.y = savedBounds.y;
+  }
+
+  mainWindow = new BrowserWindow(winOpts);
+
+  let saveTimer = null;
+  const scheduleSave = () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveWindowBounds(mainWindow), 150);
+  };
+  mainWindow.on('resize', scheduleSave);
+  mainWindow.on('move', scheduleSave);
 
   // Clean User-Agent for Google & Meta OAuth compatibility
   const defaultUA = mainWindow.webContents.userAgent;
@@ -159,8 +230,9 @@ function createWindow() {
     }
   });
 
-  // Intercept window close to hide on macOS
+  // Intercept window close to save bounds and hide on macOS
   mainWindow.on('close', (event) => {
+    saveWindowBounds(mainWindow);
     if (!isQuitting && process.platform === 'darwin') {
       event.preventDefault();
       mainWindow.hide();
@@ -237,10 +309,10 @@ function createWindow() {
   setupMenu(config.name, mainWindow);
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-    if (config.startMaximized) {
+    if (savedBounds.isMaximized) {
       mainWindow.maximize();
     }
+    mainWindow.show();
   });
 
   mainWindow.loadURL(config.url);
