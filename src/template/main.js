@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell, session, Menu, screen } = require('electron');
+const { app, BrowserWindow, WebContentsView, shell, session, Menu, screen, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -88,8 +88,21 @@ function saveWindowBounds(win) {
   }
 }
 
+const TITLEBAR_HEIGHT = 34;
+
 let mainWindow = null;
+let contentWebView = null;
 let isQuitting = false;
+
+function getActiveWebContents() {
+  if (contentWebView && contentWebView.webContents && !contentWebView.webContents.isDestroyed()) {
+    return contentWebView.webContents;
+  }
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    return mainWindow.webContents;
+  }
+  return null;
+}
 
 function setupMenu(appName, win) {
   const isMac = process.platform === 'darwin';
@@ -128,12 +141,32 @@ function setupMenu(appName, win) {
     {
       label: 'View',
       submenu: [
-        { role: 'reload' },
-        { role: 'forceReload' },
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => { const wc = getActiveWebContents(); if (wc) wc.reload(); }
+        },
+        {
+          label: 'Force Reload',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click: () => { const wc = getActiveWebContents(); if (wc) wc.reloadIgnoringCache(); }
+        },
         { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
+        {
+          label: 'Actual Size',
+          accelerator: 'CmdOrCtrl+0',
+          click: () => { const wc = getActiveWebContents(); if (wc) wc.setZoomLevel(0); }
+        },
+        {
+          label: 'Zoom In',
+          accelerator: 'CmdOrCtrl+Plus',
+          click: () => { const wc = getActiveWebContents(); if (wc) wc.setZoomLevel(wc.getZoomLevel() + 0.5); }
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CmdOrCtrl+-',
+          click: () => { const wc = getActiveWebContents(); if (wc) wc.setZoomLevel(wc.getZoomLevel() - 0.5); }
+        },
         { type: 'separator' },
         { role: 'togglefullscreen' }
       ]
@@ -144,12 +177,12 @@ function setupMenu(appName, win) {
         {
           label: 'Back',
           accelerator: 'CmdOrCtrl+[',
-          click: () => { if (win && !win.isDestroyed() && win.webContents.canGoBack()) win.webContents.goBack(); }
+          click: () => { const wc = getActiveWebContents(); if (wc && wc.canGoBack()) wc.goBack(); }
         },
         {
           label: 'Forward',
           accelerator: 'CmdOrCtrl+]',
-          click: () => { if (win && !win.isDestroyed() && win.webContents.canGoForward()) win.webContents.goForward(); }
+          click: () => { const wc = getActiveWebContents(); if (wc && wc.canGoForward()) wc.goForward(); }
         }
       ]
     },
@@ -176,84 +209,34 @@ function setupMenu(appName, win) {
   Menu.setApplicationMenu(menu);
 }
 
-function createWindow() {
-  const ses = session.fromPartition('persist:' + config.bundleId);
-
-  ses.setPermissionRequestHandler((webContents, permission, callback) => {
-    const allowed = ['media', 'notifications', 'camera', 'microphone', 'display-capture', 'clipboard-read'];
-    callback(allowed.includes(permission));
-  });
-
-  const savedBounds = loadSavedWindowBounds();
-  const winOpts = {
-    width: savedBounds.width,
-    height: savedBounds.height,
-    minWidth: config.minWidth || 400,
-    minHeight: config.minHeight || 300,
-    title: config.name,
-    titleBarStyle: config.titleBarHidden ? 'hiddenInset' : 'default',
-    trafficLightPosition: config.titleBarHidden ? { x: 14, y: 14 } : undefined,
-    show: false,
-    webPreferences: {
-      session: ses,
-      nodeIntegration: false,
-      contextIsolation: true,
-      spellcheck: true,
-      preload: path.join(__dirname, 'preload.js')
-    }
-  };
-  if (typeof savedBounds.x === 'number' && typeof savedBounds.y === 'number') {
-    winOpts.x = savedBounds.x;
-    winOpts.y = savedBounds.y;
-  }
-
-  mainWindow = new BrowserWindow(winOpts);
-
-  let saveTimer = null;
-  const scheduleSave = () => {
-    if (saveTimer) clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => saveWindowBounds(mainWindow), 150);
-  };
-  mainWindow.on('resize', scheduleSave);
-  mainWindow.on('move', scheduleSave);
-
+function attachWebContentsHandlers(wc, ses) {
   // Clean User-Agent for Google & Meta OAuth compatibility
-  const defaultUA = mainWindow.webContents.userAgent;
+  const defaultUA = wc.userAgent;
   const cleanUA = defaultUA.replace(/Electron\/\S+\s?/, '');
-  mainWindow.webContents.userAgent = cleanUA;
+  wc.userAgent = cleanUA;
 
   // Sync title and Dock unread badge
-  mainWindow.on('page-title-updated', (evt, title) => {
+  wc.on('page-title-updated', (_evt, title) => {
+    if (mainWindow && !mainWindow.isDestroyed() && title) {
+      mainWindow.setTitle(title);
+    }
     if (app.dock) {
       const match = title.match(/(?:\(|\[)(\d+\+?)(?:\)|\])/);
       app.dock.setBadge(match ? match[1] : '');
     }
   });
 
-  // Intercept window close to save bounds and hide on macOS
-  mainWindow.on('close', (event) => {
-    saveWindowBounds(mainWindow);
-    if (!isQuitting && process.platform === 'darwin') {
-      event.preventDefault();
-      mainWindow.hide();
-    }
-  });
-
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
   // Smart URL and Popup Handler
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+  wc.setWindowOpenHandler(({ url }) => {
     let initialHost = "";
     try {
       initialHost = new URL(config.url).host.toLowerCase();
-    } catch(e) {}
+    } catch (e) {}
 
     let targetHost = "";
     try {
       targetHost = new URL(url).host.toLowerCase();
-    } catch(e) {}
+    } catch (e) {}
 
     const authKeywords = [
       'accounts.google.com', 'google.com/accounts', 'google.com/signin',
@@ -286,7 +269,7 @@ function createWindow() {
   });
 
   // Handle top-level external navigation
-  mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
+  wc.on('will-navigate', (event, navigationUrl) => {
     try {
       const initialHost = new URL(config.url).host.toLowerCase();
       const targetHost = new URL(navigationUrl).host.toLowerCase();
@@ -305,18 +288,163 @@ function createWindow() {
       }
     } catch (e) {}
   });
+}
+
+function createWindow() {
+  const ses = session.fromPartition('persist:' + config.bundleId);
+
+  ses.setPermissionRequestHandler((_webContents, permission, callback) => {
+    const allowed = ['media', 'notifications', 'camera', 'microphone', 'display-capture', 'clipboard-read'];
+    callback(allowed.includes(permission));
+  });
+
+  const savedBounds = loadSavedWindowBounds();
+  const useInsetDragShell = Boolean(config.titleBarHidden && process.platform === 'darwin');
+
+  const winOpts = {
+    width: savedBounds.width,
+    height: savedBounds.height,
+    minWidth: config.minWidth || 400,
+    minHeight: config.minHeight || 300,
+    title: config.name,
+    backgroundColor: '#181818',
+    titleBarStyle: useInsetDragShell ? 'hiddenInset' : 'default',
+    trafficLightPosition: useInsetDragShell ? { x: 14, y: 11 } : undefined,
+    show: false,
+    webPreferences: useInsetDragShell
+      ? {
+          nodeIntegration: false,
+          contextIsolation: true
+        }
+      : {
+          session: ses,
+          nodeIntegration: false,
+          contextIsolation: true,
+          spellcheck: true,
+          preload: path.join(__dirname, 'preload.js')
+        }
+  };
+  if (typeof savedBounds.x === 'number' && typeof savedBounds.y === 'number') {
+    winOpts.x = savedBounds.x;
+    winOpts.y = savedBounds.y;
+  }
+
+  mainWindow = new BrowserWindow(winOpts);
+
+  let saveTimer = null;
+  const scheduleSave = () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => saveWindowBounds(mainWindow), 150);
+  };
+  mainWindow.on('resize', scheduleSave);
+  mainWindow.on('move', scheduleSave);
+
+  // Intercept window close to save bounds and hide on macOS
+  mainWindow.on('close', (event) => {
+    saveWindowBounds(mainWindow);
+    if (!isQuitting && process.platform === 'darwin') {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
+
+  mainWindow.on('closed', () => {
+    contentWebView = null;
+    mainWindow = null;
+  });
 
   setupMenu(config.name, mainWindow);
 
-  mainWindow.once('ready-to-show', () => {
-    if (savedBounds.isMaximized) {
-      mainWindow.maximize();
-    }
-    mainWindow.show();
-  });
+  if (useInsetDragShell) {
+    // Load minimal draggable titlebar shell so traffic lights never overlap page buttons
+    const titlebarHtml = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background: #181818;
+    -webkit-app-region: drag;
+    overflow: hidden;
+    transition: background-color 150ms ease;
+  }
+  .sep {
+    position: fixed; left: 0; right: 0; top: ${TITLEBAR_HEIGHT - 1}px; height: 1px;
+    background: rgba(128, 128, 128, 0.14);
+    pointer-events: none;
+  }
+</style></head>
+<body><div class="sep"></div></body>
+</html>`;
+    mainWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(titlebarHtml));
 
-  mainWindow.loadURL(config.url);
+    contentWebView = new WebContentsView({
+      webPreferences: {
+        session: ses,
+        nodeIntegration: false,
+        contextIsolation: true,
+        spellcheck: true,
+        preload: path.join(__dirname, 'preload.js')
+      }
+    });
+    mainWindow.contentView.addChildView(contentWebView);
+
+    const updateViewBounds = () => {
+      if (!mainWindow || mainWindow.isDestroyed() || !contentWebView) return;
+      const [cw, ch] = mainWindow.getContentSize();
+      const topOffset = mainWindow.isFullScreen() ? 0 : TITLEBAR_HEIGHT;
+      contentWebView.setBounds({
+        x: 0,
+        y: topOffset,
+        width: Math.max(100, cw),
+        height: Math.max(100, ch - topOffset)
+      });
+    };
+
+    updateViewBounds();
+    mainWindow.on('resize', updateViewBounds);
+    mainWindow.on('enter-full-screen', updateViewBounds);
+    mainWindow.on('leave-full-screen', updateViewBounds);
+    mainWindow.on('focus', () => {
+      if (contentWebView && contentWebView.webContents && !contentWebView.webContents.isDestroyed()) {
+        contentWebView.webContents.focus();
+      }
+    });
+
+    attachWebContentsHandlers(contentWebView.webContents, ses);
+
+    mainWindow.once('ready-to-show', () => {
+      updateViewBounds();
+      if (savedBounds.isMaximized) {
+        mainWindow.maximize();
+      }
+      mainWindow.show();
+      contentWebView.webContents.focus();
+    });
+
+    contentWebView.webContents.loadURL(config.url);
+  } else {
+    attachWebContentsHandlers(mainWindow.webContents, ses);
+
+    mainWindow.once('ready-to-show', () => {
+      if (savedBounds.isMaximized) {
+        mainWindow.maximize();
+      }
+      mainWindow.show();
+    });
+
+    mainWindow.loadURL(config.url);
+  }
 }
+
+ipcMain.on('sync-titlebar-bg', (_event, colorStr) => {
+  if (!mainWindow || mainWindow.isDestroyed() || !colorStr || typeof colorStr !== 'string') return;
+  const safeColor = colorStr.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(safeColor) && !/^rgba?\([0-9.,\s]+\)$/.test(safeColor)) return;
+  mainWindow.webContents.executeJavaScript(
+    `document.documentElement.style.background=${JSON.stringify(safeColor)};document.body.style.background=${JSON.stringify(safeColor)};`,
+    true
+  ).catch(() => {});
+});
 
 app.whenReady().then(() => {
   createWindow();
