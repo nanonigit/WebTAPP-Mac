@@ -363,9 +363,12 @@ function createWindow() {
   html, body {
     margin: 0; padding: 0; width: 100%; height: 100%;
     background: #181818;
-    -webkit-app-region: drag;
     overflow: hidden;
     transition: background-color 150ms ease;
+  }
+  .drag-bar {
+    position: fixed; left: 0; right: 0; top: 0; height: ${TITLEBAR_HEIGHT}px;
+    -webkit-app-region: drag;
   }
   .sep {
     position: fixed; left: 0; right: 0; top: ${TITLEBAR_HEIGHT - 1}px; height: 1px;
@@ -373,7 +376,7 @@ function createWindow() {
     pointer-events: none;
   }
 </style></head>
-<body><div class="sep"></div></body>
+<body><div class="drag-bar"></div><div class="sep"></div></body>
 </html>`;
     mainWindow.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(titlebarHtml));
 
