@@ -35,7 +35,7 @@ brew install --cask webtapp-mac
 
 ### 手動ダウンロード
 
-[Releases](https://github.com/nanonigit/WebTAPP-Mac/releases) から最新の `.dmg` または `.zip` をダウンロードし、展開した **WebTAPP Mac.app** を `/Applications` または `~/Applications` フォルダに移動してください。
+[Releases](https://github.com/nanonigit/WebTAPP-Mac/releases) から最新の `.dmg` または `.zip` をダウンロードし、展開した **WebTAPP Mac.app** を `/Applications` フォルダに移動してください。
 
 ---
 
@@ -47,14 +47,14 @@ brew install --cask webtapp-mac
 2. プリセット（Google Notebook, Messenger, note, ChatGPT, Claude, Notion等）を選択するか、任意のURLを入力します。
 3. （任意）「ファイル選択...」から好きなアイコン画像を指定するか、空欄にしてWebサイトから自動取得させます。
 4. **「🚀 独立Macアプリ（.app）を作成」** をクリックします。
-5. `~/Applications/` に即座にアプリが生成され、SpotlightやDockからすぐに起動できます。
+5. `/Applications/` に即座にアプリが生成され、SpotlightやDockからすぐに起動できます。
 
 ---
 
 ### 2. コマンドライン（CLI）で作成する
 
 ```bash
-# Google Notebook を作成して ~/Applications に配置
+# Google Notebook を作成して /Applications に配置
 ./bin/webtapp-mac --name "Google Notebook" --url "https://notebooklm.google.com" --install
 
 # Messenger を作成
@@ -70,7 +70,7 @@ brew install --cask webtapp-mac
 | :--- | :--- |
 | `--name`, `-n` | **[必須]** アプリの表示名 (例: `"Google Notebook"`) |
 | `--url`, `-u` | **[必須]** 開始URL (例: `"https://notebooklm.google.com"`) |
-| `--install` | `~/Applications/` に直接インストール |
+| `--install` | `/Applications/` に直接インストール |
 | `--icon`, `-i` | カスタムアイコン画像（PNG/JPEG/ICNS）。省略時はURLから自動取得 |
 | `--hidden-titlebar` | モダンな枠なしタイトルバー |
 | `--width`, `--height` | 初期のウィンドウサイズ |

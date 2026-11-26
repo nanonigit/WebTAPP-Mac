@@ -71,7 +71,7 @@ def build_application(
         bundle_id = create_bundle_id(clean_name)
 
     if install_to_apps:
-        user_apps = os.path.expanduser("~/Applications")
+        user_apps = "/Applications"
         os.makedirs(user_apps, exist_ok=True)
         output_dir = user_apps
 
@@ -189,7 +189,7 @@ def main():
     parser.add_argument("--height", type=int, default=923, help="Initial window height (default: 923)")
     parser.add_argument("--hidden-titlebar", action="store_true", help="Hide title bar for a modern borderless look")
     parser.add_argument("--maximized", action="store_true", help="Start window in maximized mode")
-    parser.add_argument("--install", action="store_true", help="Install directly to ~/Applications")
+    parser.add_argument("--install", action="store_true", help="Install directly to /Applications")
     parser.add_argument("--custom-css", default=None, help="Custom CSS string to inject into the web page")
     parser.add_argument("--custom-js", default=None, help="Custom JavaScript to execute on page load")
 

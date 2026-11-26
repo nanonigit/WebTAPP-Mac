@@ -35,7 +35,7 @@ brew install --cask webtapp-mac
 
 ### Manual Download
 
-Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigit/WebTAPP-Mac/releases), open it, and move **WebTAPP Mac.app** to your `/Applications` or `~/Applications` folder.
+Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigit/WebTAPP-Mac/releases), open it, and move **WebTAPP Mac.app** to your `/Applications` folder.
 
 ---
 
@@ -47,14 +47,14 @@ Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigi
 2. Pick a quick preset (Google Notebook, Messenger, note, ChatGPT, Claude, Notion, etc.) or enter a custom URL.
 3. (Optional) Choose a custom icon image or let it auto-extract from the website.
 4. Click **"🚀 独立Macアプリ（.app）を作成"** (Build Standalone App).
-5. The generated app is instantly installed to `~/Applications/` and ready to launch!
+5. The generated app is instantly installed to `/Applications/` and ready to launch!
 
 ---
 
 ### 2. Using the CLI
 
 ```bash
-# Create Google Notebook and install to ~/Applications
+# Create Google Notebook and install to /Applications
 ./bin/webtapp-mac --name "Google Notebook" --url "https://notebooklm.google.com" --install
 
 # Create Messenger
@@ -70,7 +70,7 @@ Download the latest `.dmg` or `.zip` from [Releases](https://github.com/nanonigi
 | :--- | :--- |
 | `--name`, `-n` | **[Required]** Display Name of the app |
 | `--url`, `-u` | **[Required]** Starting URL |
-| `--install` | Directly install to `~/Applications/` |
+| `--install` | Directly install to `/Applications/` |
 | `--icon`, `-i` | Custom icon path (PNG/JPEG/ICNS). Omit to auto-extract from URL |
 | `--hidden-titlebar` | Frameless modern title bar |
 | `--width`, `--height` | Initial window dimensions |

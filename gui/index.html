@@ -1166,7 +1166,7 @@
                 <div class="field-group">
                   <label class="field-caption" data-i18n="label_output_dir">③ 保存先フォルダ</label>
                   <div class="inline-row">
-                    <input type="text" id="customOutputDir" class="mono-input" value="~/Applications" readonly>
+                    <input type="text" id="customOutputDir" class="mono-input" value="/Applications" readonly>
                     <button type="button" class="btn" onclick="chooseCustomOutputDir()" data-i18n="btn_change_folder">変更</button>
                     <button type="button" class="btn" id="reset-dir-btn" onclick="resetOutputDir()" style="display:none;" data-i18n="btn_reset_apps">標準に戻す</button>
                   </div>
@@ -1175,7 +1175,7 @@
                 <div class="checkbox-row">
                   <label class="checkbox-label">
                     <input type="checkbox" id="install" checked onchange="onInstallToggleChange()">
-                    <span data-i18n="opt_install">~/Applications に直接インストール</span>
+                    <span data-i18n="opt_install">/Applications に直接インストール</span>
                   </label>
                   <label class="checkbox-label">
                     <input type="checkbox" id="hiddenTitlebar" checked onchange="updateFormState()">
@@ -1298,11 +1298,11 @@
             <div>
               <h1 class="page-title" data-i18n="library_title">App ライブラリ</h1>
               <p class="page-subtitle" data-i18n="library_subtitle">
-                ~/Applications 内の作成済みアプリを開いたり、設定を読み込んで再作成したりできます。
+                /Applications 内の作成済みアプリを開いたり、設定を読み込んで再作成したりできます。
               </p>
             </div>
             <div class="btn-row">
-              <button class="btn" onclick="openAppsFolderInFinder()">📁 ~/Applications</button>
+              <button class="btn" onclick="openAppsFolderInFinder()">📁 /Applications</button>
               <button class="btn" onclick="refreshInstalledApps()">↻ <span data-i18n="btn_reload">再読み込み</span></button>
             </div>
           </div>
@@ -1492,7 +1492,7 @@
         btn_browse: '選択',
         btn_change_folder: '変更',
         btn_reset_apps: '標準に戻す',
-        opt_install: '~/Applications に直接インストール',
+        opt_install: '/Applications に直接インストール',
         opt_titlebar: '枠なしタイトルバー (Full View)',
         opt_maximized: '起動時にウィンドウを最大化',
         btn_build_now: '④ URLからアプリ作成',
@@ -1514,7 +1514,7 @@
         btn_view_runtime: '実行環境を確認',
         btn_clear_history: '履歴を全消去',
         library_title: 'App ライブラリ',
-        library_subtitle: '~/Applications 内の作成済みアプリを開いたり、設定を読み込んで再作成したりできます。',
+        library_subtitle: '/Applications 内の作成済みアプリを開いたり、設定を読み込んで再作成したりできます。',
         btn_reload: '再読み込み',
         runtime_title: '実行環境の診断',
         runtime_subtitle: 'Webアプリのパッケージングに必要なコンポーネントの状態を確認します。',
@@ -1583,7 +1583,7 @@
         btn_browse: 'Choose',
         btn_change_folder: 'Choose',
         btn_reset_apps: 'Reset',
-        opt_install: 'Install directly to ~/Applications',
+        opt_install: 'Install directly to /Applications',
         opt_titlebar: 'Frameless title bar (Full View)',
         opt_maximized: 'Start window maximized',
         btn_build_now: '④ Create App from URL',
@@ -1605,7 +1605,7 @@
         btn_view_runtime: 'View Runtime',
         btn_clear_history: 'Clear All History',
         library_title: 'App Library',
-        library_subtitle: 'Open apps in ~/Applications or load their settings to rebuild.',
+        library_subtitle: 'Open apps in /Applications or load their settings to rebuild.',
         btn_reload: 'Reload',
         runtime_title: 'Runtime Diagnostics',
         runtime_subtitle: 'Verify the status of components required for native app packaging.',
@@ -1731,9 +1731,9 @@
       const outInput = document.getElementById('customOutputDir');
       const resetBtn = document.getElementById('reset-dir-btn');
       if (installChecked) {
-        outInput.value = '~/Applications';
+        outInput.value = '/Applications';
         resetBtn.style.display = 'none';
-      } else if (outInput.value === '~/Applications') {
+      } else if (outInput.value === '/Applications') {
         outInput.value = './';
         resetBtn.style.display = 'inline-flex';
       }
@@ -1792,7 +1792,7 @@
       const widthVal = document.getElementById('width').value || '780';
       const heightVal = document.getElementById('height').value || '923';
       const hiddenTitlebar = document.getElementById('hiddenTitlebar').checked;
-      const outDir = document.getElementById('customOutputDir').value.trim() || '~/Applications';
+      const outDir = document.getElementById('customOutputDir').value.trim() || '/Applications';
 
       const nameOk = nameVal.length > 0;
       const urlOk = isValidWebUrl(urlVal);
@@ -1884,7 +1884,7 @@
 
     function resetOutputDir() {
       document.getElementById('install').checked = true;
-      document.getElementById('customOutputDir').value = '~/Applications';
+      document.getElementById('customOutputDir').value = '/Applications';
       document.getElementById('reset-dir-btn').style.display = 'none';
       updateFormState();
     }
@@ -2164,8 +2164,8 @@
       const container = document.getElementById('library-list-container');
       if (installedApps.length === 0) {
         container.innerHTML = `<div class="empty-caption">${t(
-          '~/Applications に作成されたアプリがありません。',
-          'No apps in ~/Applications.'
+          '/Applications に作成されたアプリがありません。',
+          'No apps in /Applications.'
         )}</div>`;
         return;
       }

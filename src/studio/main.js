@@ -3,6 +3,9 @@ const path = require('path');
 const fs = require('fs');
 const { spawn, execSync } = require('child_process');
 
+// All generated apps are installed system-wide, directly under /Applications.
+const INSTALL_APPS_DIR = '/Applications';
+
 let mainWindow = null;
 
 const DEFAULT_WINDOW_WIDTH = 780;
@@ -135,8 +138,6 @@ function resolveInstalledAppBundlePath() {
   }
   const sysApps = '/Applications/WebTAPP Mac.app';
   if (fs.existsSync(sysApps)) return sysApps;
-  const userApps = path.join(app.getPath('home'), 'Applications', 'WebTAPP Mac.app');
-  if (fs.existsSync(userApps)) return userApps;
   return sysApps;
 }
 
@@ -236,7 +237,7 @@ function getFolderSizeMB(dirPath) {
 }
 
 function listInstalledWebApps() {
-  const appsDir = path.join(app.getPath('home'), 'Applications');
+  const appsDir = INSTALL_APPS_DIR;
   if (!fs.existsSync(appsDir)) {
     return [];
   }
@@ -351,8 +352,8 @@ function checkRuntimeEnvironment() {
     });
   }
 
-  // 5. User Applications Directory (~/Applications)
-  const userAppsDir = path.join(app.getPath('home'), 'Applications');
+  // 5. Install destination (/Applications)
+  const userAppsDir = INSTALL_APPS_DIR;
   try {
     if (!fs.existsSync(userAppsDir)) {
       fs.mkdirSync(userAppsDir, { recursive: true });
@@ -360,14 +361,14 @@ function checkRuntimeEnvironment() {
     fs.accessSync(userAppsDir, fs.constants.W_OK);
     checks.push({
       id: 'apps-dir',
-      name: 'Install Destination (~/Applications)',
+      name: 'Install Destination (/Applications)',
       ok: true,
       detail: userAppsDir
     });
   } catch (err) {
     checks.push({
       id: 'apps-dir',
-      name: 'Install Destination (~/Applications)',
+      name: 'Install Destination (/Applications)',
       ok: false,
       detail: err.message
     });
@@ -778,7 +779,7 @@ ipcMain.handle('build-app', async (event, params) => {
         const appPath = match
           ? match[1].trim()
           : (params.install
-              ? path.join(app.getPath('home'), 'Applications', `${params.name}.app`)
+              ? path.join(INSTALL_APPS_DIR, `${params.name}.app`)
               : path.join(params.output_dir || process.cwd(), `${params.name}.app`));
         const bundleId = bundleMatch ? bundleMatch[1].trim() : (params.bundle_id || '');
         appendHistoryItem({

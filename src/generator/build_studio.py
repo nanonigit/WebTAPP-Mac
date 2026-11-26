@@ -32,17 +32,28 @@ def get_git_metadata():
 
     return f"1.1.{commit_count}", short_sha
 
+def find_electron_base():
+    """Locate Electron.app: env override, repo node_modules, then the installed app's bundled copy."""
+    candidates = []
+    env_base = os.environ.get("WEBTAPP_ELECTRON_BASE")
+    if env_base:
+        candidates.append(Path(env_base))
+    candidates.append(BASE_DIR / "node_modules" / "electron" / "dist" / "Electron.app")
+    candidates.append(Path("/Applications/WebTAPP Mac.app/Contents/Resources/app/electron-base/Electron.app"))
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError(f"Electron base app not found. Checked: {[str(c) for c in candidates]}")
+
 def build_studio_app(output_dir=None):
     if not output_dir:
-        output_dir = os.path.expanduser("~/Applications")
+        output_dir = "/Applications"
     
     os.makedirs(output_dir, exist_ok=True)
     app_name = "WebTAPP Mac"
     app_bundle_path = os.path.join(output_dir, f"{app_name}.app")
     
-    electron_base = BASE_DIR / "node_modules" / "electron" / "dist" / "Electron.app"
-    if not electron_base.exists():
-        raise FileNotFoundError(f"Electron base app not found at {electron_base}")
+    electron_base = find_electron_base()
 
     if os.path.exists(app_bundle_path):
         print(f"[*] Overwriting existing application at {app_bundle_path}...")

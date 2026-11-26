@@ -41,6 +41,11 @@ if [[ -d "$(pwd)/node_modules" && ! -e "$stage/source/node_modules" ]]; then
   ln -s "$(pwd)/node_modules" "$stage/source/node_modules"
 fi
 
+# Fall back to the Electron runtime bundled in the installed app when node_modules is unavailable.
+if [[ ! -d "$stage/source/node_modules/electron/dist/Electron.app" ]]; then
+  export WEBTAPP_ELECTRON_BASE="$installed_app/Contents/Resources/app/electron-base/Electron.app"
+fi
+
 python3 "$stage/source/src/generator/build_studio.py" "$stage/out"
 built_app="$stage/out/WebTAPP Mac.app"
 codesign --verify --deep --strict "$built_app"

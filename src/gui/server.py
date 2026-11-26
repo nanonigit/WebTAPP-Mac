@@ -14,7 +14,7 @@ from build_app import build_application
 from build_studio import get_git_metadata
 
 def list_installed_webapps():
-    apps_dir = Path.home() / "Applications"
+    apps_dir = Path("/Applications")
     if not apps_dir.exists():
         return []
     items = []
@@ -50,7 +50,7 @@ def get_runtime_status():
         {"id": "chromium-base", "name": "Embedded Chromium Runtime (Electron.app)", "ok": (BASE_DIR / "node_modules" / "electron" / "dist" / "Electron.app").exists(), "detail": "Electron.app"},
         {"id": "icon-toolchain", "name": "macOS Icon Toolchain (sips + iconutil)", "ok": bool(shutil.which("sips") and shutil.which("iconutil")), "detail": "/usr/bin/sips · /usr/bin/iconutil"},
         {"id": "codesign", "name": "Gatekeeper Ad-Hoc Code Signing (codesign + xattr)", "ok": bool(shutil.which("codesign")), "detail": "/usr/bin/codesign"},
-        {"id": "apps-dir", "name": "Install Destination (~/Applications)", "ok": True, "detail": str(Path.home() / "Applications")}
+        {"id": "apps-dir", "name": "Install Destination (/Applications)", "ok": True, "detail": "/Applications"}
     ]
     return {
         "version": ver,
@@ -60,7 +60,7 @@ def get_runtime_status():
         "lastUpdatedFromVersion": None,
         "chromium": "Embedded",
         "platform": sys.platform,
-        "appsDir": str(Path.home() / "Applications"),
+        "appsDir": "/Applications",
         "checks": checks
     }
 
