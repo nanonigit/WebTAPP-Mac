@@ -299,7 +299,9 @@ function createWindow() {
   });
 
   const savedBounds = loadSavedWindowBounds();
-  const useInsetDragShell = Boolean(config.titleBarHidden && process.platform === 'darwin');
+  // Use native BrowserWindow directly (avoid WebContentsView child view which breaks macOS IME & scrolling,
+  // and use standard titlebar so traffic lights never overlap page UI buttons).
+  const useInsetDragShell = false;
 
   const winOpts = {
     width: savedBounds.width,
