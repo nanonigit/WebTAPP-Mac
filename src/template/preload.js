@@ -1,4 +1,8 @@
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, contextBridge } = require('electron');
+
+contextBridge.exposeInMainWorld('__webtappNotify', (payload) => {
+  ipcRenderer.send('show-notification', payload);
+});
 
 function isTransparentColor(bg) {
   if (!bg || bg === 'transparent') return true;

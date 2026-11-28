@@ -1,4 +1,4 @@
-const { app, BrowserWindow, WebContentsView, shell, session, Menu, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, WebContentsView, Notification, shell, session, Menu, screen, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -93,6 +93,33 @@ const TITLEBAR_HEIGHT = 34;
 let mainWindow = null;
 let contentWebView = null;
 let isQuitting = false;
+let lastWebNotificationAt = 0;
+
+function focusMainWindow() {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore();
+  }
+  mainWindow.show();
+  mainWindow.focus();
+}
+
+function showNativeNotification({ title, body, silent = false } = {}) {
+  if (!Notification.isSupported()) return;
+  try {
+    const notif = new Notification({
+      title: (title && String(title).trim()) || config.name || 'WebTAPP',
+      body: body ? String(body) : '',
+      silent: Boolean(silent)
+    });
+    notif.on('click', () => {
+      focusMainWindow();
+    });
+    notif.show();
+  } catch (err) {
+    console.error('Failed to show notification:', err);
+  }
+}
 
 function getActiveWebContents() {
   if (contentWebView && contentWebView.webContents && !contentWebView.webContents.isDestroyed()) {
@@ -215,15 +242,84 @@ function attachWebContentsHandlers(wc, ses) {
   const cleanUA = defaultUA.replace(/Electron\/\S+\s?/, '');
   wc.userAgent = cleanUA;
 
-  // Sync title and Dock unread badge
+  // Patch window.Notification in the page context so web notifications route to native macOS Notification
+  wc.on('dom-ready', () => {
+    wc.executeJavaScript(`
+      (() => {
+        if (window.__webtappNotificationPatched) return;
+        const notifyBridge = window.__webtappNotify;
+        if (typeof notifyBridge !== 'function') return;
+        window.__webtappNotificationPatched = true;
+
+        class WebTAPPNotification {
+          constructor(title, options = {}) {
+            this.title = String(title || '');
+            this.body = options && options.body ? String(options.body) : '';
+            this.silent = Boolean(options && options.silent);
+            this.tag = options && options.tag ? String(options.tag) : '';
+            this.onclick = null;
+            this.onclose = null;
+            this.onerror = null;
+            this.onshow = null;
+            try {
+              notifyBridge({ title: this.title, body: this.body, silent: this.silent, tag: this.tag });
+            } catch {}
+          }
+          close() {}
+          addEventListener() {}
+          removeEventListener() {}
+          dispatchEvent() { return true; }
+        }
+        WebTAPPNotification.permission = 'granted';
+        WebTAPPNotification.maxActions = 2;
+        WebTAPPNotification.requestPermission = (cb) => {
+          if (typeof cb === 'function') {
+            try { cb('granted'); } catch {}
+          }
+          return Promise.resolve('granted');
+        };
+
+        try {
+          Object.defineProperty(window, 'Notification', {
+            value: WebTAPPNotification,
+            writable: true,
+            configurable: true
+          });
+        } catch {
+          window.Notification = WebTAPPNotification;
+        }
+      })();
+    `, true).catch(() => {});
+  });
+
+  // Sync title, Dock unread badge, and fallback macOS notification on unread increase
+  let previousUnreadCount = null;
+  wc.on('did-finish-load', () => {
+    const initialMatch = (wc.getTitle() || '').match(/(?:\(|\[)(\d+)(?:\+)?(?:\)|\])/);
+    previousUnreadCount = initialMatch ? parseInt(initialMatch[1], 10) : 0;
+  });
+
   wc.on('page-title-updated', (_evt, title) => {
     if (mainWindow && !mainWindow.isDestroyed() && title) {
       mainWindow.setTitle(title);
     }
+    const match = title.match(/(?:\(|\[)(\d+\+?)(?:\)|\])/);
     if (app.dock) {
-      const match = title.match(/(?:\(|\[)(\d+\+?)(?:\)|\])/);
       app.dock.setBadge(match ? match[1] : '');
     }
+
+    const numericMatch = title.match(/(?:\(|\[)(\d+)(?:\+)?(?:\)|\])/);
+    const currentUnread = numericMatch ? parseInt(numericMatch[1], 10) : 0;
+    const isWindowInactive = !mainWindow || mainWindow.isDestroyed() || !mainWindow.isVisible() || !mainWindow.isFocused();
+    const recentlyNotifiedByWeb = Date.now() - lastWebNotificationAt < 3000;
+
+    if (previousUnreadCount !== null && currentUnread > previousUnreadCount && isWindowInactive && !recentlyNotifiedByWeb) {
+      showNativeNotification({
+        title: config.name,
+        body: title
+      });
+    }
+    previousUnreadCount = currentUnread;
   });
 
   // Smart URL and Popup Handler
@@ -293,9 +389,12 @@ function attachWebContentsHandlers(wc, ses) {
 function createWindow() {
   const ses = session.fromPartition('persist:' + config.bundleId);
 
+  const allowedPermissions = new Set(['media', 'notifications', 'camera', 'microphone', 'display-capture', 'clipboard-read']);
   ses.setPermissionRequestHandler((_webContents, permission, callback) => {
-    const allowed = ['media', 'notifications', 'camera', 'microphone', 'display-capture', 'clipboard-read'];
-    callback(allowed.includes(permission));
+    callback(allowedPermissions.has(permission));
+  });
+  ses.setPermissionCheckHandler((_webContents, permission) => {
+    return allowedPermissions.has(permission);
   });
 
   const savedBounds = loadSavedWindowBounds();
@@ -440,6 +539,16 @@ function createWindow() {
     mainWindow.loadURL(config.url);
   }
 }
+
+ipcMain.on('show-notification', (_event, payload) => {
+  if (!payload || typeof payload !== 'object') return;
+  lastWebNotificationAt = Date.now();
+  showNativeNotification({
+    title: payload.title,
+    body: payload.body,
+    silent: payload.silent
+  });
+});
 
 ipcMain.on('sync-titlebar-bg', (_event, colorStr) => {
   if (!mainWindow || mainWindow.isDestroyed() || !colorStr || typeof colorStr !== 'string') return;
